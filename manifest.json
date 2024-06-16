@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "Your Addon Name",
+    "version": "1.0",
+    "description": "Your Addon Description",
+    "icons": {
+      "48": "icon.png"
+    },
+    "background": {
+      "scripts": ["background.js"]
+    },
+    "permissions": [
+      "tabs",
+      "webNavigation",
+      "<all_urls>"
+    ],
+    "applications": {
+      "gecko": {
+        "id": "your-addon@your-domain.com",
+        "strict_min_version": "57.0"
+      }
+    }
+  }
