@@ -4,7 +4,7 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 const registerToTST = async () => {
   try {
     const windows = await browser.windows.getAll();
-    const height = 1.5 + windows.length; // Calculate new height
+    const height = windows.length === 1 ? 2.0 : 2.0 + windows.length; // Calculate new height based on condition
     // Base CSS to include with updates
     const baseCSS = `
       .newtab-button::after {
