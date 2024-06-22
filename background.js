@@ -58,18 +58,20 @@ const updateTabCount = async () => {
       const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
       const totalTabsThisWindow = tabsThisWindow.length;
 
-      // Generate HTML content for this window
-      contents += `<div style="font-family: monospace; display: table;">
-                      <div style="display: table-row;">
-                          <span style="display: table-cell; text-align: right;width: 80px;">Window ${windowIndex}:</span>
-                          <span style="display: table-cell; text-align: right; padding-left: 5px; width: 25px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
-                          <span style="display: table-cell; padding-left: 2px;">/</span>
-                          <span style="display: table-cell; text-align: left; padding-left: 2px; width: 25px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
-                          <span style="display: table-cell; padding-left: 5px;">tabs</span>
-                      </div>
-                   </div>`;
+      // Generate HTML content for this window if more than one window is open
+      if (windows.length > 1) {
+        contents += `<div style="font-family: monospace; display: table;">
+                        <div style="display: table-row;">
+                            <span style="display: table-cell; text-align: right;width: 80px;">Window ${windowIndex}:</span>
+                            <span style="display: table-cell; text-align: right; padding-left: 5px; width: 25px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
+                            <span style="display: table-cell; padding-left: 2px;">/</span>
+                            <span style="display: table-cell; text-align: left; padding-left: 2px; width: 25px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
+                            <span style="display: table-cell; padding-left: 5px;">tabs</span>
+                        </div>
+                    </div>`;
 
-      windowIndex++; // Increment the counter at the end of each iteration
+        windowIndex++; // Increment the counter at the end of each iteration
+      }
     }
 
     // Add global tabs info
