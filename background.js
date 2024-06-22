@@ -50,6 +50,8 @@ const updateTabCount = async () => {
     const windows = await browser.windows.getAll();
     let contents = '';
 
+    let windowIndex = 1;
+
     // Iterate through each window to get tabs info
     for (const window of windows) {
       const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
@@ -59,13 +61,15 @@ const updateTabCount = async () => {
       // Generate HTML content for this window
       contents += `<div style="font-family: monospace; display: table;">
                       <div style="display: table-row;">
-                          <span style="display: table-cell; text-align: right;width: 80px;">Window ${window.id}:</span>
+                          <span style="display: table-cell; text-align: right;width: 80px;">Window ${windowIndex}:</span>
                           <span style="display: table-cell; text-align: right; padding-left: 5px; width: 25px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
                           <span style="display: table-cell; padding-left: 2px;">/</span>
                           <span style="display: table-cell; text-align: left; padding-left: 2px; width: 25px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
                           <span style="display: table-cell; padding-left: 5px;">tabs</span>
                       </div>
                    </div>`;
+
+      windowIndex++; // Increment the counter at the end of each iteration
     }
 
     // Add global tabs info
