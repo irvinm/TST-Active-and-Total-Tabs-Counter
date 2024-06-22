@@ -26,7 +26,7 @@ const registerToTST = async () => {
       type: 'register-self',
       name: 'Your Addon Name',
       style: combinedCSS,
-      listeningTypes: ['ready', 'tabbar-updated']
+      listeningTypes: ['ready', 'tabbar-updated', 'sidebar-show']
     });
 
   } catch (e) {
@@ -100,6 +100,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
   switch (message.type) {
     case 'ready':
     case 'tabbar-updated':
+    case 'sidebar-show':
       updateTabCount();
       break;
   }
