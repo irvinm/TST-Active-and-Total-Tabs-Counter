@@ -5,6 +5,8 @@ const registerToTST = async () => {
   try {
     const windows = await browser.windows.getAll();
     const height = windows.length === 1 ? 2.0 : 2.0 + windows.length; // Calculate new height based on condition
+    const caretHeight = windows.length === 1 ? 0.2 : ((windows.length + 1) / 2 - 0.2); // Calculate caret height based on condition
+
     // Base CSS to include with updates
     const baseCSS = `
       .newtab-button::after {
@@ -16,10 +18,15 @@ const registerToTST = async () => {
         align-items: center;
       }
     `;
+
     // New CSS for updating the height of .newtab-button
     const heightCSS = `.newtab-button { height: ${height}rem !important; }`;
+
+    // New CSS to change location of the newtab button caret
+    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: ${caretHeight}rem !important;)`;
+
     // Combine the base CSS with the new height CSS
-    const combinedCSS = baseCSS + heightCSS;
+    const combinedCSS = baseCSS + heightCSS + caretCSS;
 
     // Send a synchronus message to TST to register the addon and adjust the new tab button height
     await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
