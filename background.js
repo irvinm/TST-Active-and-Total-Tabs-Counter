@@ -45,6 +45,10 @@ const updateTabCount = async () => {
     const allTabs = await browser.tabs.query({});
     const loadedTabsGlobal = allTabs.filter(tab => !tab.discarded).length;
     const totalTabsGlobal = allTabs.length;
+    const tabCount = totalTabsGlobal.toString();
+
+    // Set the badge text to the number of open tabs
+    browser.browserAction.setBadgeText({ text: tabCount });
 
     // Get all windows
     const windows = await browser.windows.getAll();
@@ -124,6 +128,12 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
 // Listen for window events and update newtab button height as needed
 browser.windows.onCreated.addListener(registerToTST);
 browser.windows.onRemoved.addListener(registerToTST);
+
+// Set badge text background to grey
+browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
+
+//Set badge text font color to white
+browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
 // Register to TST and update tab count on startup
 registerToTST();
