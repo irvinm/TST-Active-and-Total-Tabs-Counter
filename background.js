@@ -5,7 +5,7 @@ const registerToTST = async () => {
   try {
     const windows = await browser.windows.getAll();
     const height = windows.length === 1 ? 2.0 : 2.0 + windows.length; // Calculate new height based on condition
-    const caretHeight = windows.length === 1 ? 0.2 : ((windows.length + 1) / 2 - 0.2); // Calculate caret height based on condition
+    const caretHeight = windows.length === 1 ? 0.2 : ((windows.length + 1) / 2 - 0.25); // Calculate caret height based on condition
 
     // Base CSS to include with updates
     const baseCSS = `
