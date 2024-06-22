@@ -13,7 +13,7 @@
     ]
   },
   "permissions": [],
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "TST-Active-and-Total-Tabs-Counter@irvinm.addons.mozilla.org",
       "strict_min_version": "63.0"
