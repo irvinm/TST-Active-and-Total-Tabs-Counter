@@ -20,10 +20,10 @@ const registerToTST = async () => {
     `;
 
     // New CSS for updating the height of .newtab-button
-    const heightCSS = `.newtab-button { height: ${height}rem !important; }`;
+    const heightCSS = `.newtab-button { height: ${height}rem; }`;
 
     // New CSS to change location of the newtab button caret
-    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: ${caretHeight}rem !important;)`;
+    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: ${caretHeight}rem;)`;
 
     // Combine the base CSS with the new height CSS
     const combinedCSS = baseCSS + heightCSS + caretCSS;
