@@ -141,10 +141,10 @@ browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 //Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
-// Try to register to TST and update tab count on startup
-registerToTST();
+// Wait 3 seconds before registering to TST to ensure TST is loaded (Faster machines)
+sleep(3000).then(registerToTST);
 updateTabCount();
 
-// Wait 3 seconds before re-registering to TST to ensure TST is loaded
+// Wait another 3 seconds before re-registering to TST to ensure TST is loaded (Slower machines)
 sleep(3000).then(registerToTST);
 updateTabCount();
