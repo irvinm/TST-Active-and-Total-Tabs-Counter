@@ -141,10 +141,9 @@ browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 //Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
-// Wait 3 seconds before registering to TST to ensure TST is loaded (Faster machines)
-sleep(3000).then(registerToTST);
-updateTabCount();
-
-// Wait another 3 seconds before re-registering to TST to ensure TST is loaded (Slower machines)
-sleep(3000).then(registerToTST);
-updateTabCount();
+// Make a call to registerToTST and updateTabCount in a loop 5 times with a 3 second delay after each loop
+for (let i = 0; i < 5; i++) {
+  registerToTST();
+  updateTabCount();
+  sleep(3000);
+}
