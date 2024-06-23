@@ -1,6 +1,6 @@
 ![CI/CD](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/workflows/CI/CD/badge.svg) ![Mozilla Add-on](https://img.shields.io/amo/users/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square) ![](https://img.shields.io/amo/v/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square)
 
-# TST Active and Total Tabs
+# TST Active and Total Tabs Counter
 This project is to help track and display:
 - Active (non-discarded) tabs per window
 - Total active tabs across all windows
