@@ -38,7 +38,7 @@ const registerToTST = async () => {
 
   } catch (e) {
     console.error('Failed to communicate with TST', e);
-    sleep(250).then(registerToTST);
+    await sleep(250).then(registerToTST);
   }
 
   // Update the tab count CSS after registering with TST
@@ -141,9 +141,8 @@ browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 //Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
-// Make a call to registerToTST and updateTabCount in a loop 5 times with a 3 second delay after each loop
+// Make a call to registerToTST in a loop 5 times with a 3 second delay after each loop
 for (let i = 0; i < 5; i++) {
   registerToTST();
-  updateTabCount();
-  sleep(3000);
+  await sleep(3000);
 }
