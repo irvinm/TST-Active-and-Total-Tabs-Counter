@@ -31,7 +31,7 @@ const registerToTST = async () => {
     // Send a synchronus message to TST to register the addon and adjust the new tab button height
     await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
       type: 'register-self',
-      name: 'Your Addon Name',
+      name: 'TST Active and Total Tabs Counter',
       style: combinedCSS,
       listeningTypes: ['ready', 'tabbar-updated', 'sidebar-show']
     });
