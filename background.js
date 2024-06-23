@@ -38,6 +38,7 @@ const registerToTST = async () => {
 
   } catch (e) {
     console.error('Failed to communicate with TST', e);
+    sleep(250).then(registerToTST);
   }
 
   // Update the tab count CSS after registering with TST
