@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TST Active and Total Tabs Counter",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Tracks and displays in TST the number of active and total tabs",
   "homepage_url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter",
   "icons": {
