@@ -117,7 +117,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
     case 'ready':
     case 'tabbar-updated':
     case 'sidebar-show':
-      updateTabCount();
+      console.log(new Date().toISOString() + ': Calling registerToTST() from onMessageExternal');
+      registerToTST();
       break;
   }
 });
@@ -141,8 +142,16 @@ browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 //Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
-// Make a call to registerToTST in a loop 5 times with a 3 second delay after each loop
-for (let i = 0; i < 5; i++) {
-  registerToTST();
-  await sleep(3000);
+async function initializeAddon() {
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  for (let i = 0; i < 15; i++) {
+    console.log(new Date().toISOString() + ': Call to registerToTST #', i);
+    registerToTST();
+    await sleep(1000);
+  }
 }
+
+initializeAddon();
