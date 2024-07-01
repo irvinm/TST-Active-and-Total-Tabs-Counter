@@ -12,7 +12,9 @@
       "background.js"
     ]
   },
-  "permissions": [],
+  "permissions": [
+    "storage"
+  ],
   "browser_specific_settings": {
     "gecko": {
       "id": "TST-Active-and-Total-Tabs-Counter@irvinm.addons.mozilla.org",
@@ -23,6 +25,10 @@
     "default_icon": {
       "128": "images/icon.png"
     },
-    "default_title": "TST Active and Total Tabs Counter"
-  }
+    "default_title": "TST Active and Total Tabs Counter",
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    "images/*"
+  ]
 }

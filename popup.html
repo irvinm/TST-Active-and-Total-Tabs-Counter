@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tab Counter Options</title>
+    <style>
+        #message {
+            margin-top: 2em;
+            min-height: 20px;
+            border: 1px solid transparent;
+        }
+        #image-row {
+            text-align: center; /* Center the images */
+            margin-bottom: 20px; /* Add some space between the images and the options */
+        }
+        #image-row img, #image-row .arrow {
+            display: inline-block;
+            vertical-align: middle; /* Aligns the images and arrows vertically in the middle */
+            width: 35px; /* Adjust width as needed */
+            height: 35px; /* Adjust height as needed */
+        }
+        #image-row .arrow {
+            width: auto; /* Auto width for arrows */
+            height: auto; /* Auto height for arrows */
+            font-size: 24px; /* Adjust the size of the arrow as needed */
+            margin-right: 10px; /* Consistent spacing with images */
+        }
+        #message {
+            border-color: #424242; /* Slightly visible border in dark mode */
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e0e0e0;
+            }
+            #message {
+                border-color: #424242; /* Slightly visible border in dark mode */
+            }
+            .option-group {
+                background-color: #333333;
+                padding: 10px;
+            }
+            .option-group label {
+                color: #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Badge Counter Options</h1>
+    <div id="image-row"></div> <!-- Images will be dynamically inserted here -->
+    <form id="optionsForm">
+        <!-- Removed nativeBadge option -->
+        <div class="option-group" data-option="switchToSVG">
+            <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
+            <label for="switchToSVG">Use native badge counter for 1-999 tabs then SVG for 1000+ tabs</label><br>
+        </div>
+        <div class="option-group" data-option="alwaysSVG">
+            <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
+            <label for="alwaysSVG">Always use dynamic SVG creation</label><br>
+        </div>
+    </form>
+    <div id="message"></div>
+    <script src="popup.js"></script>
+</body>
+</html>
