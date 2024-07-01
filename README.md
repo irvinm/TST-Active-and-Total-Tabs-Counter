@@ -8,7 +8,9 @@ This project is to help track and display:
 - Total tabs across all windows
 
 # New features
-- v0.9.8: Clicking on the badge icon will allow the user to choose the badge rendering method they want to use. (Native vs. SVG)
+- v0.9.8: Clicking on the badge icon will allow the user to choose the badge rendering method they want to use.
+  - Option 1:  Native tab counter up to 999 tabs ![Native up to 999 tabs](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/BadgeText-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
+  - Option 2:  SVG rendering up to 999 tabs ![SVG with 999](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
 
 # History of the problem
 Older versions of TST could accomplish this with some counting CSS code.  However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
