@@ -7,6 +7,10 @@ This project is to help track and display:
 - Total tabs per window
 - Total tabs across all windows
 
+# New features
+- v0.9.8: Clicking on the badge icon will allow the user to choose the badge rendering method they want to use. (Native vs. SVG)
+
+# History of the problem
 Older versions of TST could accomplish this with some counting CSS code.  However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
 
 This addon tracks the number of active tabs and total tabs to be displayed on top of the "newtab button" inside the TST sidebar.  
