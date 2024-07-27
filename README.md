@@ -8,6 +8,10 @@ This project is to help track and display:
 - Total tabs across all windows
 
 # New features
+- v0.9.9: Added new display option for a more compact list of information
+  - Click on the addon badge and either select the original "1 line per window" option or the new "compact view" option to be shown in TST
+  - The compact view will be left justified, narrow font, self-adjusting button height, window info text will not wrap, and will dynamically adjust if the sidebar is resized or the number of tabs or windows change
+  - ![Compact Example](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/CompactView.png)
 - v0.9.8: Clicking on the badge icon will allow the user to choose the badge rendering method they want to use.
   - Option 1:  Native tab counter up to 999 tabs ![Native up to 999 tabs](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/BadgeText-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
   - Option 2:  SVG rendering up to 999 tabs ![SVG with 999](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
