@@ -1,3 +1,17 @@
+var tabCountMethod;
+
+async function getDisplayStyleOption() {
+    let result = await browser.storage.local.get(['displayStyleOption']);
+    if (result.displayStyleOption === "compactView") {
+        tabCountMethod = 2;
+    } else {
+        tabCountMethod = 1;
+    }
+}
+
+// Check if we have already set the display style option or just use the default
+getDisplayStyleOption();
+
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 // Register the addon with TST
@@ -42,6 +56,14 @@ const registerToTST = async () => {
   } catch (e) {
     console.error('Failed to communicate with TST', e);
     await sleep(250).then(registerToTST);
+  }
+  
+  let result2 = await browser.storage.local.get(['displayStyleOption']);
+  if (result2.displayStyleOption === "compactView") {
+      tabCountMethod = 2;
+  } else {
+      await browser.storage.local.set({displayStyleOption: "oneLinePerWindow"});
+      tabCountMethod = 1;
   }
 
   // Update the tab count CSS after registering with TST
