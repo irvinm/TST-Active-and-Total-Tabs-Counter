@@ -3,51 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Tab Counter Options</title>
-    <style>
-        #message {
-            margin-top: 2em;
-            min-height: 20px;
-            border: 1px solid transparent;
-        }
-        #image-row {
-            text-align: center; /* Center the images */
-            margin-bottom: 20px; /* Add some space between the images and the options */
-        }
-        #image-row img, #image-row .arrow {
-            display: inline-block;
-            vertical-align: middle; /* Aligns the images and arrows vertically in the middle */
-            width: 35px; /* Adjust width as needed */
-            height: 35px; /* Adjust height as needed */
-        }
-        #image-row .arrow {
-            width: auto; /* Auto width for arrows */
-            height: auto; /* Auto height for arrows */
-            font-size: 24px; /* Adjust the size of the arrow as needed */
-            margin-right: 5px; /* Consistent spacing with images */
-            margin-left: 5px; /* Consistent spacing with images */
-        }
-        #message {
-            border-color: #424242; /* Slightly visible border in dark mode */
-        }
-
-        /* Dark mode styles */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #121212;
-                color: #e0e0e0;
-            }
-            #message {
-                border-color: #424242; /* Slightly visible border in dark mode */
-            }
-            .option-group {
-                background-color: #333333;
-                padding: 10px;
-            }
-            .option-group label {
-                color: #e0e0e0;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="popup.css">
 </head>
 <body>
     <h1>Badge Counter Options</h1>
@@ -63,6 +19,16 @@
             <label for="alwaysSVG">Always use dynamic SVG creation</label><br>
         </div>
     </form>
+    <h2>Display Options</h2>
+    <div id="image-row2"></div> <!-- Images will be dynamically inserted here -->
+    <div class="option-group2" data-option="oneLinePerWindow">
+        <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow" title="Table aligned, 1 row per info element, monospace font, maintains table up to 9999 tabs, Format -> Label: xxxx / yyyy tabs">
+        <label for="oneLinePerWindow" title="Format -> Label: xxxx / yyyy tabs, table aligned, monospace font, maintains alignment up to 9999 tabs">Use 1 line of information per window</label><br>
+    </div>
+    <div class="option-group2" data-option="compactView">
+        <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
+        <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
+    </div>
     <div id="message"></div>
     <script src="popup.js"></script>
 </body>

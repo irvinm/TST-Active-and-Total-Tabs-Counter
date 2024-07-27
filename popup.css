@@ -1,0 +1,42 @@
+.option-group, .option-group2 {
+    margin-bottom: 5px; /* Reduce the bottom margin to decrease space */
+}
+#message {
+    margin-top: 2em;
+    min-height: 20px;
+    border: 1px solid transparent;
+    border-color: #424242; /* Slightly visible border in dark mode */
+}
+#image-row, #image-row2 {
+    text-align: center; /* Center the images */
+    margin-bottom: 20px; /* Add some space between the images and the options */
+}
+#image-row img, #image-row .arrow {
+    display: inline-block;
+    vertical-align: middle; /* Aligns the images and arrows vertically in the middle */
+    width: 35px; /* Adjust width as needed */
+    height: 35px; /* Adjust height as needed */
+}
+#image-row .arrow {
+    width: auto; /* Auto width for arrows */
+    height: auto; /* Auto height for arrows */
+    font-size: 24px; /* Adjust the size of the arrow as needed */
+    margin-right: 5px; /* Consistent spacing with images */
+    margin-left: 5px; /* Consistent spacing with images */
+}
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    #message {
+        border-color: #424242; /* Slightly visible border in dark mode */
+    }
+    .option-group, .option-group2 {
+        background-color: #333333;
+        padding: 5px;
+    }
+    .option-group label, .option-group2 label {
+        color: #e0e0e0;
+    }
+}
