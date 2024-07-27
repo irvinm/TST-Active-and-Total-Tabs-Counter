@@ -315,6 +315,15 @@ browser.runtime.onMessage.addListener(
     }
 );
 
+// Listen for messages
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "setTabCountMethod") {
+      tabCountMethod = message.tabCountMethod;
+      console.log("Message received to set tabCountMethod = ", tabCountMethod);
+      registerToTST(); // Register to TST again to update the new tab button
+  }
+});
+
 // Set badge text background to grey
 browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 
