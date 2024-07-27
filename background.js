@@ -193,38 +193,76 @@ const updateTabCount = async () => {
 
     let windowIndex = 1;
 
-    // Iterate through each window to get tabs info
-    for (const window of windows) {
-      const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-      const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-      const totalTabsThisWindow = tabsThisWindow.length;
+    if (tabCountMethod === 1) {
+      // Iterate through each window to get tabs info
+      for (const window of windows) {
+        const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+        const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+        const totalTabsThisWindow = tabsThisWindow.length;
 
-      // Generate HTML content for this window if more than one window is open
-      if (windows.length > 1) {
-        contents += `<div style="font-family: monospace; display: table;">
-                        <div style="display: table-row;">
-                            <span style="display: table-cell; text-align: right;width: 80px;">Window ${windowIndex}:</span>
-                            <span style="display: table-cell; text-align: right; padding-left: 5px; width: 25px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
-                            <span style="display: table-cell; padding-left: 2px;">/</span>
-                            <span style="display: table-cell; text-align: left; padding-left: 2px; width: 25px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
-                            <span style="display: table-cell; padding-left: 5px;">tabs</span>
-                        </div>
-                    </div>`;
+        // Generate HTML content for this window if more than one window is open
+        if (windows.length > 1) {
+          contents += `<div style="display: flex; justify-content: center;">
+                          <div style="font-family: monospace; display: table;">
+                              <div style="display: table-row;">
+                                  <span style="display: table-cell; text-align: right; width: 40px;">Win${windowIndex}:</span>
+                                  <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
+                                  <span style="display: table-cell; padding-left: 2px;">/</span>
+                                  <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
+                                  <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                              </div>
+                          </div>
+                      </div>`;
 
-        windowIndex++; // Increment the counter at the end of each iteration
+          windowIndex++; // Increment the counter at the end of each iteration
+        }
       }
-    }
 
-    // Add global tabs info
-    contents += `<div style="font-family: monospace; display: table;">
-                    <div style="display: table-row;">
-                        <span style="display: table-cell; text-align: right;width: 80px;">Total:</span>
-                        <span style="display: table-cell; text-align: right; padding-left: 5px; width: 25px;">${loadedTabsGlobal}</span>
-                        <span style="display: table-cell; padding-left: 2px;">/</span>
-                        <span style="display: table-cell; text-align: left; padding-left: 2px; width: 25px;">${totalTabsGlobal}</span>
-                        <span style="display: table-cell; padding-left: 5px;">tabs</span>
-                    </div>
-                 </div>`;
+      // Add global tabs info
+      contents += `<div style="display: flex; justify-content: center;">
+                      <div style="font-family: monospace; display: table;">
+                          <div style="display: table-row;">
+                              <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
+                              <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
+                              <span style="display: table-cell; padding-left: 2px;">/</span>
+                              <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
+                              <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                          </div>
+                      </div>
+                  </div>`;
+      
+      // After all content pieces have been put together, add padding with extra padding to the right
+      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
+    }
+    else if (tabCountMethod === 2) {
+        // Initialize an HTML string to collect entries
+        let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
+
+        let totalActiveTabs = 0;
+        let grandTotalTabs = 0;
+
+        for (const window of windows) {
+            const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+            const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+            const totalTabsThisWindow = tabsThisWindow.length;
+
+            // Update the total counts
+            totalActiveTabs += loadedTabsThisWindow;
+            grandTotalTabs += totalTabsThisWindow;
+
+            // Append the string for this window into the HTML string
+            windowContentsHtml += `<span style="white-space: nowrap;">W${windowIndex}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
+            windowIndex++; // Increment the counter at the end of each iteration
+        }
+
+        // Append the total active/total tabs across all windows
+        windowContentsHtml += `<span style="white-space: nowrap;">T: ${totalActiveTabs}/${grandTotalTabs}</span>`;
+
+        windowContentsHtml += '</div>'; // Close the adjusted div
+
+        // Assign the HTML string to contents
+        contents = windowContentsHtml;
+    }
 
     // Update the TST new tab button with the generated content
     await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
