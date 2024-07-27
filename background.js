@@ -3,30 +3,33 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 // Register the addon with TST
 const registerToTST = async () => {
   try {
-    const windows = await browser.windows.getAll();
-    const height = windows.length === 1 ? 2.0 : 2.0 + windows.length; // Calculate new height based on condition
-    const caretHeight = windows.length === 1 ? 0.2 : ((windows.length + 1) / 2 - 0.25); // Calculate caret height based on condition
-
     // Base CSS to include with updates
     const baseCSS = `
       .newtab-button::after {
         display: none;
       }
+    
+      .newtab-button {
+        height: auto;
+        display: contents;
+      }
+
       .newtab-button .extra-items-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        height: auto;
+        display: contents;
+        align-items: left;
+      }
+
+      .newtab-button-box {
+        height: auto;
       }
     `;
 
-    // New CSS for updating the height of .newtab-button
-    const heightCSS = `.newtab-button { height: ${height}rem; }`;
-
-    // New CSS to change location of the newtab button caret
-    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: ${caretHeight}rem;)`;
+    // CSS to change vertical location of the newtab button caret
+    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: 0.3rem;)`;
 
     // Combine the base CSS with the new height CSS
-    const combinedCSS = baseCSS + heightCSS + caretCSS;
+    const combinedCSS = baseCSS + caretCSS;
 
     // Send a synchronus message to TST to register the addon and adjust the new tab button height
     await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
