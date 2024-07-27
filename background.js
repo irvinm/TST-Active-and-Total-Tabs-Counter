@@ -119,7 +119,6 @@ function svgRenderBadge(tabCount) {
   browser.browserAction.setIcon({path: svgIcon});
 }
 
-// Use this function to decide how to display the tab count
 async function updateBadgeDisplay(tabCount) {
   const displayOption = await getDisplayOption();
   switch (displayOption) {
@@ -249,7 +248,6 @@ browser.windows.onRemoved.addListener(registerToTST);
 browser.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action === "updateBadge") {
-            // Call your badge update function here
             updateTabCount();
             sendResponse({result: "Badge updated"});
         }
