@@ -25,11 +25,19 @@ This addon tracks the number of active tabs and total tabs to be displayed on to
 
 Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-material" title="school-material icons">School-material icons created by Freepik - Flaticon</a>
 
-# 1 Window (Total only - 4 Active, 108 Total)
+# Examples (1 line per window vs. Compact mode)
+## 1 line per window
+### 1 Window (Total only - 4 Active, 108 Total)
 ![1Window](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/d13c8d87-d1e2-4474-aef9-74cc680fbedb)
 
-# 2 Windows (Individual windows (4A/108T, 1A/1T), then Total (5A/109T))
+### 2 Windows (Individual windows (4A/108T, 1A/1T), then Total (5A/109T))
 ![2Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/438dfdac-6468-495a-907f-b3cf75973108)
 
-# 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
+### 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
 ![3Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/901d2e6d-8a16-48d1-b3be-6ba595111b9a)
+
+## Compact mode (v0.9.9+)
+### 1 line per window
+![image](https://github.com/user-attachments/assets/4f256b5c-5c2c-42ac-ac69-5c75a31a6870)
+### Compact mode
+![image](https://github.com/user-attachments/assets/aadc049d-012d-4ff0-85dd-b0f36bb572d3)
