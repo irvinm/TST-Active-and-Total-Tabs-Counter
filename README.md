@@ -1,11 +1,17 @@
 ![CI/CD](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/workflows/CI/CD/badge.svg) ![Mozilla Add-on](https://img.shields.io/amo/users/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square) ![](https://img.shields.io/amo/v/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square)
 
 # TST Active and Total Tabs Counter
-This project is to help track and display:
+### This project is to help track and display:
 - Active (non-discarded) tabs per window
 - Total active tabs across all windows
 - Total tabs per window
 - Total tabs across all windows
+
+### To enable this extension to work within Private windows
+- Enable the extension iself to "Allow" to "Run in Private Windows"
+    - about:addons -> TST Active and Total Tabs Counter -> Allow "Run in Private Windows"
+- Enable the extension to interact with TST in Private Windows
+    - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # New features
 - v0.9.9: Added new display option for a more compact list of information
