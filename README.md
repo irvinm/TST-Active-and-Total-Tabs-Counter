@@ -7,8 +7,8 @@
 - Total tabs per window
 - Total tabs across all windows
 
-### To enable this extension to work within Private windows
-- Enable the extension iself to "Allow" to "Run in Private Windows"
+### To enable this extension to work within Private Windows
+- Enable the extension itself to "Allow" to "Run in Private Windows"
     - about:addons -> TST Active and Total Tabs Counter -> Allow "Run in Private Windows"
 - Enable the extension to interact with TST in Private Windows
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
