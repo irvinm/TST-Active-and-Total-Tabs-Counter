@@ -196,7 +196,9 @@ const sendTSTMessage = async (contents, windowId = null) => {
   await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', message);
 };
 
-const updateTabCount = async () => {
+
+
+const updateTabCount = async (specificWindowId = null) => {
   try {
     // Get all tabs globally
     const allTabs = await browser.tabs.query({});
@@ -206,13 +208,12 @@ const updateTabCount = async () => {
 
     updateBadgeDisplay(tabCount);
 
-    // Get all windows
+    if (tabCountMethod === 1) {
+      // Get all windows for cross-window totals
     const windows = await browser.windows.getAll();
     let contents = '';
-
     let windowIndex = 1;
 
-    if (tabCountMethod === 1) {
       // Iterate through each window to get tabs info
       for (const window of windows) {
         const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
@@ -251,12 +252,16 @@ const updateTabCount = async () => {
                   </div>`;
       
       // After all content pieces have been put together, add padding with extra padding to the right
-      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;
+      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
       
       // Send to all windows
       await sendTSTMessage(contents);
     }
     else if (tabCountMethod === 2) {
+        // Get all windows for cross-window totals
+        const windows = await browser.windows.getAll();
+        let windowIndex = 1;
+        
         // Initialize an HTML string to collect entries
         let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
 
@@ -286,13 +291,12 @@ const updateTabCount = async () => {
         await sendTSTMessage(windowContentsHtml);
     }
     else if (tabCountMethod === 3) {
-        // We need to send individual content to each window's TST sidebar
-        for (const window of windows) {
+        // Simple View: optimize by updating only specific window if provided
+        const updateSimpleViewWindow = async (window) => {
             const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
             const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
             const totalTabsThisWindow = tabsThisWindow.length;
 
-            // Generate simple HTML content for this specific window
             const windowContents = `<div style="display: flex; width: 100%; height: 100%; align-items: center;">
                             <div style="width: 15px; flex-shrink: 0;"></div>
                             <div style="display: flex; flex: 1; align-items: center;">
@@ -302,8 +306,19 @@ const updateTabCount = async () => {
                             </div>
                         </div>`;
 
-            // Send to this window only
             await sendTSTMessage(windowContents, window.id);
+        };
+
+        if (specificWindowId) {
+            // Update only the specific window
+            const window = await browser.windows.get(specificWindowId);
+            await updateSimpleViewWindow(window);
+        } else {
+            // Update all windows
+            const windows = await browser.windows.getAll();
+            for (const window of windows) {
+                await updateSimpleViewWindow(window);
+            }
         }
     }
 
@@ -329,11 +344,15 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 });
 
 // Listen for tab events
-browser.tabs.onCreated.addListener(updateTabCount);
-browser.tabs.onRemoved.addListener(updateTabCount);
-browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+browser.tabs.onCreated.addListener((tab) => {
+  updateTabCount(tab.windowId);
+});
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  updateTabCount(removeInfo.windowId);
+});
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if ('discarded' in changeInfo) {
-    updateTabCount();
+    updateTabCount(tab.windowId);
   }
 });
 
