@@ -14,7 +14,7 @@
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # New features
-- NEW: Added new display option for a simple display of the current window's information only
+- NEW: Added new display option for a display of the current window's information only
 - v0.9.9: Added new display option for a more compact list of information
   - Click on the addon badge and either select the original "1 line per window" option or the new "compact view" option to be shown in TST
   - The compact view will be left justified, narrow font, self-adjusting button height, window info text will not wrap, and will dynamically adjust if the sidebar is resized or the number of tabs or windows change
@@ -36,7 +36,7 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 The extension offers three display modes:
 1. **1 line per window** - Shows individual window counts plus total across all windows
 2. **Compact mode** - Shows all information in a compressed format
-3. **Simple View** - Shows only the current window's tab count with a simple layout
+3. **Minimal View** - Shows only the current window's tab count with a minimal layout
 
 ## 1 line per window
 ### 1 Window (Total only - 4 Active, 108 Total)
@@ -54,5 +54,5 @@ The extension offers three display modes:
 ### Compact mode
 ![image](https://github.com/user-attachments/assets/aadc049d-012d-4ff0-85dd-b0f36bb572d3)
 
-## Simple View (NEW)
+## Minimal View (NEW)
 TODO

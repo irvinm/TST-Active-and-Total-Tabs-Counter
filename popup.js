@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         alwaysSVG: ['./images/SVG-9-Cropped.png', './images/SVG-99-Cropped.png', './images/SVG-999-Cropped.png', './images/SVG-1000-Cropped.png'],
         oneLinePerWindow: ['./images/OneLinePerWindow.png'],
         compactView: ['./images/CompactView.png'],
-        simpleView: ['./images/SimpleView.png']
+        minimalView: ['./images/MinimalView.png']
     };
 
     function updateImageRow(selectedOption) {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById(result2.displayStyleOption).checked = true;
             updateImageRow2(result2.displayStyleOption);
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
-        } else if (result2.displayStyleOption === "simpleView") {
+        } else if (result2.displayStyleOption === "minimalView") {
             document.getElementById(result2.displayStyleOption).checked = true;
             updateImageRow2(result2.displayStyleOption);
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 3 });
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 1 });
                     } else if (this.id === "compactView") {
                         browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
-                    } else if (this.id === "simpleView") {
+                    } else if (this.id === "minimalView") {
                         browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 3 });
                     }
 

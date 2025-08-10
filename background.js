@@ -2,7 +2,7 @@ var tabCountMethod;
 
 async function getDisplayStyleOption() {
     let result = await browser.storage.local.get(['displayStyleOption']);
-    if (result.displayStyleOption === "simpleView") {
+    if (result.displayStyleOption === "minimalView") {
         tabCountMethod = 3;
     } else if (result.displayStyleOption === "compactView") {
         tabCountMethod = 2;
@@ -61,7 +61,7 @@ const registerToTST = async () => {
   }
   
   let result2 = await browser.storage.local.get(['displayStyleOption']);
-  if (result2.displayStyleOption === "simpleView") {
+  if (result2.displayStyleOption === "minimalView") {
       tabCountMethod = 3;
   } else if (result2.displayStyleOption === "compactView") {
       tabCountMethod = 2;
@@ -291,8 +291,8 @@ const updateTabCount = async (specificWindowId = null) => {
         await sendTSTMessage(windowContentsHtml);
     }
     else if (tabCountMethod === 3) {
-        // Simple View: optimize by updating only specific window if provided
-        const updateSimpleViewWindow = async (window) => {
+        // Minimal View: update only specific window if provided
+        const updateMinimalViewWindow = async (window) => {
             const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
             const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
             const totalTabsThisWindow = tabsThisWindow.length;
@@ -312,12 +312,12 @@ const updateTabCount = async (specificWindowId = null) => {
         if (specificWindowId) {
             // Update only the specific window
             const window = await browser.windows.get(specificWindowId);
-            await updateSimpleViewWindow(window);
+            await updateMinimalViewWindow(window);
         } else {
             // Update all windows
             const windows = await browser.windows.getAll();
             for (const window of windows) {
-                await updateSimpleViewWindow(window);
+                await updateMinimalViewWindow(window);
             }
         }
     }
