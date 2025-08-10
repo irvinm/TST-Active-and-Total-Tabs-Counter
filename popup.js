@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         switchToSVG: ['./images/BadgeText-9-Cropped.png', './images/BadgeText-99-Cropped.png', './images/BadgeText-999-Cropped.png', './images/SVG-1000-Cropped.png'],
         alwaysSVG: ['./images/SVG-9-Cropped.png', './images/SVG-99-Cropped.png', './images/SVG-999-Cropped.png', './images/SVG-1000-Cropped.png'],
         oneLinePerWindow: ['./images/OneLinePerWindow.png'],
-        compactView: ['./images/CompactView.png']
+        compactView: ['./images/CompactView.png'],
+        simpleView: ['./images/SimpleView.png']
     };
 
     function updateImageRow(selectedOption) {
@@ -71,6 +72,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById(result2.displayStyleOption).checked = true;
             updateImageRow2(result2.displayStyleOption);
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
+        } else if (result2.displayStyleOption === "simpleView") {
+            document.getElementById(result2.displayStyleOption).checked = true;
+            updateImageRow2(result2.displayStyleOption);
+            browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 3 });
         } else {
             await browser.storage.local.set({displayStyleOption: "oneLinePerWindow"});
             document.getElementById("oneLinePerWindow").checked = true;
@@ -125,8 +130,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                     if (this.id === "oneLinePerWindow") {
                         browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 1 });
-                    } else {
+                    } else if (this.id === "compactView") {
                         browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
+                    } else if (this.id === "simpleView") {
+                        browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 3 });
                     }
 
                 } catch (error) {

@@ -2,7 +2,9 @@ var tabCountMethod;
 
 async function getDisplayStyleOption() {
     let result = await browser.storage.local.get(['displayStyleOption']);
-    if (result.displayStyleOption === "compactView") {
+    if (result.displayStyleOption === "simpleView") {
+        tabCountMethod = 3;
+    } else if (result.displayStyleOption === "compactView") {
         tabCountMethod = 2;
     } else {
         tabCountMethod = 1;
@@ -59,7 +61,9 @@ const registerToTST = async () => {
   }
   
   let result2 = await browser.storage.local.get(['displayStyleOption']);
-  if (result2.displayStyleOption === "compactView") {
+  if (result2.displayStyleOption === "simpleView") {
+      tabCountMethod = 3;
+  } else if (result2.displayStyleOption === "compactView") {
       tabCountMethod = 2;
   } else {
       await browser.storage.local.set({displayStyleOption: "oneLinePerWindow"});
@@ -177,6 +181,21 @@ async function updateBadgeDisplay(tabCount) {
   }
 }
 
+// Helper function to send TST message with optional windowId
+const sendTSTMessage = async (contents, windowId = null) => {
+  const message = {
+    type: 'set-extra-contents',
+    place: 'new-tab-button',
+    contents: contents,
+  };
+  
+  if (windowId !== null) {
+    message.windowId = windowId;
+  }
+  
+  await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', message);
+};
+
 const updateTabCount = async () => {
   try {
     // Get all tabs globally
@@ -232,7 +251,10 @@ const updateTabCount = async () => {
                   </div>`;
       
       // After all content pieces have been put together, add padding with extra padding to the right
-      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
+      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;
+      
+      // Send to all windows
+      await sendTSTMessage(contents);
     }
     else if (tabCountMethod === 2) {
         // Initialize an HTML string to collect entries
@@ -260,16 +282,30 @@ const updateTabCount = async () => {
 
         windowContentsHtml += '</div>'; // Close the adjusted div
 
-        // Assign the HTML string to contents
-        contents = windowContentsHtml;
+        // Send to all windows
+        await sendTSTMessage(windowContentsHtml);
     }
+    else if (tabCountMethod === 3) {
+        // We need to send individual content to each window's TST sidebar
+        for (const window of windows) {
+            const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+            const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+            const totalTabsThisWindow = tabsThisWindow.length;
 
-    // Update the TST new tab button with the generated content
-    await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
-      type: 'set-extra-contents',
-      place: 'new-tab-button',
-      contents: contents,
-    });
+            // Generate simple HTML content for this specific window
+            const windowContents = `<div style="display: flex; width: 100%; height: 100%; align-items: center;">
+                            <div style="width: 15px; flex-shrink: 0;"></div>
+                            <div style="display: flex; flex: 1; align-items: center;">
+                                <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</div>
+                                <div style="flex: 0 0 auto; text-align: center; font-size: 20px; font-weight: bold; padding: 0 0;">+</div>
+                                <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</div>
+                            </div>
+                        </div>`;
+
+            // Send to this window only
+            await sendTSTMessage(windowContents, window.id);
+        }
+    }
 
   } catch (e) {
     console.error('Failed to update tab count', e);
