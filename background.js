@@ -304,7 +304,7 @@ const updateTabCount = async (specificWindowId = null) => {
 
             const windowContents = `<div style="display: flex; width: 100%; height: 100%; align-items: center;">
                             <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest; line-height: 1;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</div>
-                            <div style="flex: 0 0 auto; text-align: center; font-size: 1.6em; font-weight: bold; line-height: 1;">+</div>
+                            <div style="flex: 0 0 auto; text-align: center; font-size: 1.6em; font-weight: bold; line-height: 1; transform: translateY(-5%);">+</div>
                             <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest; line-height: 1;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</div>
                         </div>`;
 
