@@ -41,8 +41,13 @@ const registerToTST = async () => {
       }
     `;
 
-    // CSS to change vertical location of the newtab button caret
-    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: 0.3rem;)`;
+    // CSS to vertically center the caret character within the button
+    const caretCSS = `
+      .after-tabs button.newtab-action-selector-anchor {
+        display: flex;
+        align-items: center;
+      }
+    `;
 
     // Combine the base CSS with the new height CSS
     const combinedCSS = baseCSS + caretCSS;
