@@ -303,9 +303,9 @@ const updateTabCount = async (specificWindowId = null) => {
             const totalTabsThisWindow = tabsThisWindow.length;
 
             const windowContents = `<div style="display: flex; width: 100%; height: 100%; align-items: center;">
-                            <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</div>
-                            <div style="flex: 0 0 auto; text-align: center; font-size: 20px; font-weight: bold; padding: 0 0;">+</div>
-                            <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</div>
+                            <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest; line-height: 1;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</div>
+                            <div style="flex: 0 0 auto; text-align: center; font-size: 1.6em; font-weight: bold; line-height: 1;">+</div>
+                            <div style="flex: 1; text-align: center; font-family: monospace; font-size: smallest; line-height: 1;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</div>
                         </div>`;
 
             await sendTSTMessage(windowContents, window.id);
