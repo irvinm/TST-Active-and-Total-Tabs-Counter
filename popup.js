@@ -78,6 +78,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 1 });
         }
 
+        // Load badge scope preference
+        let result3 = await browser.storage.local.get({ badgeScopeOption: "all" });
+        const selectedScope = result3.badgeScopeOption || "all";
+        
+        // Set corresponding radio button
+        if (selectedScope === "current") {
+            document.getElementById("badgeScopeCurrent").checked = true;
+        } else {
+            document.getElementById("badgeScopeAll").checked = true;
+        }
+
     } catch (error) {
         console.error('Error loading or setting default options:', error);
     }
@@ -131,6 +142,35 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 } catch (error) {
                     console.error('Error saving display option or updating badge:', error);
+                }
+            }
+        });
+    });
+
+    // Listen for badge scope changes
+    document.querySelectorAll('input[name="badgeScopeOption"]').forEach(radio => {
+        radio.addEventListener('change', async function() {
+            if (this.checked) {
+                try {
+                    const newValue = this.value; // "all" or "current"
+                    
+                    // Save to storage
+                    await browser.storage.local.set({ badgeScopeOption: newValue });
+                    console.log('Badge scope saved:', newValue);
+                    
+                    // Show confirmation message
+                    const messageDiv = document.getElementById('message');
+                    messageDiv.textContent = 'Badge scope saved!';
+                    messageDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        messageDiv.textContent = '';
+                    }, 3000);
+                    
+                    // Trigger badge update in background script
+                    await browser.runtime.sendMessage({ action: "updateBadge" });
+                } catch (error) {
+                    console.error('Error saving badge scope:', error);
                 }
             }
         });

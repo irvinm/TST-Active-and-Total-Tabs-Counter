@@ -14,6 +14,14 @@
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # New features
+- v1.0.0: Added badge scope option to show per-window or global tab counts
+  - Click on the addon badge to access the new "Badge Scope Options" section
+  - Choose between:
+    - **All Windows** (default): Shows total tabs across all windows on all badges (existing behavior)
+    - **Current Window Only**: Each window's badge independently shows only the tab count for that window
+      - Example: Window A with 10 tabs shows "10", Window B with 5 tabs shows "5"
+  - When enabled, the badge on each browser window updates automatically to show its own tab count
+  - For private windows without permission, the badge displays "N/A" with a tooltip explaining "Private window - permission required"
 - v0.9.9: Added new display option for a more compact list of information
   - Click on the addon badge and either select the original "1 line per window" option or the new "compact view" option to be shown in TST
   - The compact view will be left justified, narrow font, self-adjusting button height, window info text will not wrap, and will dynamically adjust if the sidebar is resized or the number of tabs or windows change

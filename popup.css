@@ -1,42 +1,189 @@
-.option-group, .option-group2 {
-    margin-bottom: 5px; /* Reduce the bottom margin to decrease space */
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
-#message {
-    margin-top: 2em;
-    min-height: 20px;
-    border: 1px solid transparent;
-    border-color: #424242; /* Slightly visible border in dark mode */
+
+html {
+    width: 430px;
 }
-#image-row, #image-row2 {
-    text-align: center; /* Center the images */
-    margin-bottom: 20px; /* Add some space between the images and the options */
+
+body {
+    width: 430px;
+    min-width: 430px;
+    box-sizing: border-box;
+    padding: 10px;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #edf3ff;
+    background: #0f1420;
+    overflow-y: hidden;
 }
-#image-row img, #image-row .arrow {
-    display: inline-block;
-    vertical-align: middle; /* Aligns the images and arrows vertically in the middle */
-    width: 35px; /* Adjust width as needed */
-    height: 35px; /* Adjust height as needed */
+
+h2 {
+    margin: 12px 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #f7faff;
+    padding: 5px 8px;
+    border-left: 3px solid #4d92ff;
+    border-radius: 6px;
+    background: rgba(18, 29, 47, 0.72);
+    letter-spacing: 0.01em;
 }
+
+form {
+    margin: 0;
+}
+
+.option-group,
+.option-group2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 7px;
+    padding: 8px 10px;
+    border: 1px solid #2f3f5a;
+    border-radius: 9px;
+    background-color: #1b2434;
+}
+
+.option-group input,
+.option-group2 input {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.option-group label,
+.option-group2 label {
+    flex: 1 1 auto;
+    margin: 0;
+    line-height: 1.25;
+    color: #edf3ff;
+    position: relative;
+    top: -1px;
+}
+
+.option-group br,
+.option-group2 br {
+    display: none;
+}
+
+#image-row,
+#image-row2 {
+    text-align: center;
+    margin: 3px 0 9px;
+    padding: 8px;
+    border: 1px solid #2f3f5a;
+    border-radius: 10px;
+    background-color: #141d2c;
+}
+
+#image-row img,
 #image-row .arrow {
-    width: auto; /* Auto width for arrows */
-    height: auto; /* Auto height for arrows */
-    font-size: 24px; /* Adjust the size of the arrow as needed */
-    margin-right: 5px; /* Consistent spacing with images */
-    margin-left: 5px; /* Consistent spacing with images */
+    display: inline-block;
+    vertical-align: middle;
 }
-@media (prefers-color-scheme: dark) {
+
+#image-row img {
+    width: 28px;
+    height: 28px;
+}
+
+#image-row .arrow {
+    width: auto;
+    height: auto;
+    margin: 0 3px;
+    font-size: 18px;
+    color: #c9d6ef;
+}
+
+#image-row2 img {
+    display: block;
+    max-width: 305px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+#message {
+    margin-top: 8px;
+    height: 32px;
+    padding: 6px 8px;
+    border: 1px solid #2f3f5a;
+    border-radius: 7px;
+    color: #c9d6ef;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (prefers-color-scheme: light) {
     body {
-        background-color: #121212;
-        color: #e0e0e0;
+        color: #1f2b3d;
+        background: #eef3fb;
     }
+
+    h2 {
+        color: #121a29;
+        border-left-color: #2c6ef1;
+        background: #e5edf9;
+    }
+
+    .option-group,
+    .option-group2 {
+        border-color: #c8d6ea;
+        background-color: #ffffff;
+    }
+
+    .option-group label,
+    .option-group2 label {
+        color: #1f2b3d;
+    }
+
+    #image-row,
+    #image-row2,
     #message {
-        border-color: #424242; /* Slightly visible border in dark mode */
+        border-color: #c8d6ea;
+        background-color: #f7faff;
     }
-    .option-group, .option-group2 {
-        background-color: #333333;
-        padding: 5px;
+
+    #image-row .arrow,
+    #message {
+        color: #42526b;
     }
-    .option-group label, .option-group2 label {
-        color: #e0e0e0;
+}
+
+@media (max-height: 760px) {
+    body {
+        padding: 9px;
+        font-size: 13px;
+    }
+
+    h2 {
+        margin: 10px 0 7px;
+        padding: 4px 7px;
+    }
+
+    .option-group,
+    .option-group2 {
+        margin-bottom: 6px;
+        padding: 7px 9px;
+    }
+
+    #image-row,
+    #image-row2 {
+        margin-bottom: 8px;
+        padding: 7px;
+    }
+
+    #image-row2 img {
+        max-width: 295px;
     }
 }

@@ -1,2 +1,29 @@
+# Build artifacts
 TST-Active-and-Total-Tabs-Counter.zip
 TST-Active-and-Total-Tabs-Counter.xpi
+
+# Node.js (if used for tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+.env*
