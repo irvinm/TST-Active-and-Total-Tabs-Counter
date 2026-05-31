@@ -41,6 +41,21 @@
         <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
         <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
     </div>
+    <h2>TST Sidebar Scope</h2>
+    <form id="tstScopeForm">
+        <div class="option-group" data-option="tstScopeAll">
+            <input type="radio" id="tstScopeAll" name="tstScopeOption" value="all">
+            <label for="tstScopeAll">All windows summary</label><br>
+        </div>
+        <div class="option-group" data-option="tstScopeCurrent">
+            <input type="radio" id="tstScopeCurrent" name="tstScopeOption" value="current">
+            <label for="tstScopeCurrent">Current window only</label><br>
+        </div>
+        <div class="option-group" data-option="tstScopeMatchBadge">
+            <input type="radio" id="tstScopeMatchBadge" name="tstScopeOption" value="matchBadge">
+            <label for="tstScopeMatchBadge">Match badge scope</label><br>
+        </div>
+    </form>
     <div id="message"></div>
     <script src="popup.js"></script>
 </body>

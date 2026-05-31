@@ -89,6 +89,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.getElementById("badgeScopeAll").checked = true;
         }
 
+        // Load TST scope preference
+        let result4 = await browser.storage.local.get({ tstScopeOption: "all" });
+        const selectedTstScope = result4.tstScopeOption || "all";
+
+        if (selectedTstScope === "current") {
+            document.getElementById("tstScopeCurrent").checked = true;
+        } else if (selectedTstScope === "matchBadge") {
+            document.getElementById("tstScopeMatchBadge").checked = true;
+        } else {
+            document.getElementById("tstScopeAll").checked = true;
+        }
+
     } catch (error) {
         console.error('Error loading or setting default options:', error);
     }
@@ -171,6 +183,35 @@ document.addEventListener('DOMContentLoaded', async function() {
                     await browser.runtime.sendMessage({ action: "updateBadge" });
                 } catch (error) {
                     console.error('Error saving badge scope:', error);
+                }
+            }
+        });
+    });
+
+    // Listen for TST scope changes
+    document.querySelectorAll('input[name="tstScopeOption"]').forEach(radio => {
+        radio.addEventListener('change', async function() {
+            if (this.checked) {
+                try {
+                    const newValue = this.value; // "all", "current", or "matchBadge"
+
+                    // Save to storage
+                    await browser.storage.local.set({ tstScopeOption: newValue });
+                    console.log('TST scope saved:', newValue);
+
+                    // Show confirmation message
+                    const messageDiv = document.getElementById('message');
+                    messageDiv.textContent = 'TST scope saved!';
+                    messageDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        messageDiv.textContent = '';
+                    }, 3000);
+
+                    // Trigger update in background script
+                    await browser.runtime.sendMessage({ action: "updateBadge" });
+                } catch (error) {
+                    console.error('Error saving TST scope:', error);
                 }
             }
         });

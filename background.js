@@ -9,6 +9,19 @@ async function getDisplayStyleOption() {
     }
 }
 
+// Get TST sidebar scope preference with validation and default fallback
+async function getTstScopeOption() {
+  const { tstScopeOption } = await browser.storage.local.get({
+    tstScopeOption: "all" // Default to all windows summary
+  });
+
+  if (tstScopeOption !== "all" && tstScopeOption !== "current" && tstScopeOption !== "matchBadge") {
+    return "all";
+  }
+
+  return tstScopeOption;
+}
+
 // Get badge scope preference with validation and default fallback
 async function getBadgeScopeOption() {
     const { badgeScopeOption } = await browser.storage.local.get({
@@ -207,116 +220,164 @@ async function updateBadgeDisplay(tabCount) {
   }
 }
 
-const updateTabCount = async () => {
+const updateTabCount = async (targetWindowId = null, skipBadgeUpdate = false) => {
   try {
     // Get badge scope preference
     const badgeScopeOption = await getBadgeScopeOption();
     const displayOption = await getDisplayOption();
+    const tstScopeOption = await getTstScopeOption();
     
     // Get all tabs globally (for TST sidebar display)
     const allTabsGlobal = await browser.tabs.query({});
     const loadedTabsGlobal = allTabsGlobal.filter(tab => !tab.discarded).length;
     const totalTabsGlobal = allTabsGlobal.length;
 
-    if (badgeScopeOption === "current") {
-      // Per-window mode: set badge for each window independently
-      const windows = await browser.windows.getAll();
-      
-      for (const window of windows) {
-        try {
-          const tabsInWindow = await browser.tabs.query({ windowId: window.id });
-          const tabCount = tabsInWindow.length;
+    if (!skipBadgeUpdate) {
+      if (badgeScopeOption === "current") {
+        // Per-window mode: set badge for each window independently
+        const windows = await browser.windows.getAll();
+        
+        for (const window of windows) {
+          try {
+            const tabsInWindow = await browser.tabs.query({ windowId: window.id });
+            const tabCount = tabsInWindow.length;
 
-          const useSvg = displayOption === "alwaysSVG" || (displayOption === "switchToSVG" && tabCount >= 1000);
+            const useSvg = displayOption === "alwaysSVG" || (displayOption === "switchToSVG" && tabCount >= 1000);
 
-          if (useSvg) {
-            svgRenderBadge(tabCount, window.id);
-            await browser.browserAction.setBadgeText({ text: '', windowId: window.id });
-          } else {
-            const badgeText = displayOption === "nativeBadge" && tabCount >= 1000 ? "999" : tabCount.toString();
-            await browser.browserAction.setIcon({ path: "images/icon.png", windowId: window.id });
-            await browser.browserAction.setBadgeText({ text: badgeText, windowId: window.id });
-          }
+            if (useSvg) {
+              svgRenderBadge(tabCount, window.id);
+              await browser.browserAction.setBadgeText({ text: '', windowId: window.id });
+            } else {
+              const badgeText = displayOption === "nativeBadge" && tabCount >= 1000 ? "999" : tabCount.toString();
+              await browser.browserAction.setIcon({ path: "images/icon.png", windowId: window.id });
+              await browser.browserAction.setBadgeText({ text: badgeText, windowId: window.id });
+            }
 
-          await browser.browserAction.setTitle({ 
-            title: `${tabCount} tabs in this window`, 
-            windowId: window.id 
-          });
-        } catch (error) {
-          // Handle private window permission denial
-          if (error.message && (error.message.includes("incognito") || error.message.includes("private"))) {
-            // Display "N/A" on badge for this window
-            await browser.browserAction.setBadgeText({ text: "N/A", windowId: window.id });
             await browser.browserAction.setTitle({ 
-              title: "Private window - permission required", 
+              title: `${tabCount} tabs in this window`, 
               windowId: window.id 
             });
-          } else {
-            // Re-throw unexpected errors
-            throw error;
+          } catch (error) {
+            // Handle private window permission denial
+            if (error.message && (error.message.includes("incognito") || error.message.includes("private"))) {
+              // Display "N/A" on badge for this window
+              await browser.browserAction.setBadgeText({ text: "N/A", windowId: window.id });
+              await browser.browserAction.setTitle({ 
+                title: "Private window - permission required", 
+                windowId: window.id 
+              });
+            } else {
+              // Re-throw unexpected errors
+              throw error;
+            }
           }
         }
+      } else {
+        // All windows mode (default): set same total badge for all windows
+        const tabCount = totalTabsGlobal.toString();
+        const windows = await browser.windows.getAll();
+        
+        // Set title on all windows
+        for (const window of windows) {
+          await browser.browserAction.setTitle({ 
+            title: `${tabCount} total tabs across all windows`, 
+            windowId: window.id 
+          });
+        }
+        
+        // Also update badge display for SVG rendering
+        updateBadgeDisplay(tabCount);
       }
-    } else {
-      // All windows mode (default): set same total badge for all windows
-      const tabCount = totalTabsGlobal.toString();
-      const windows = await browser.windows.getAll();
-      
-      // Set title on all windows
-      for (const window of windows) {
-        await browser.browserAction.setTitle({ 
-          title: `${tabCount} total tabs across all windows`, 
-          windowId: window.id 
-        });
-      }
-      
-      // Also update badge display for SVG rendering
-      updateBadgeDisplay(tabCount);
     }
 
     // Get all windows
     const windows = await browser.windows.getAll();
+    const activeWindow = await browser.windows.getLastFocused({ populate: false });
+    const activeWindowId = (activeWindow && activeWindow.id !== undefined)
+      ? activeWindow.id
+      : (windows.length > 0 ? windows[0].id : null);
+    const effectiveTstScope = tstScopeOption === "matchBadge" ? badgeScopeOption : tstScopeOption;
+    const resolvedTargetWindowId = targetWindowId !== null ? targetWindowId : activeWindowId;
+
+    // In current-window scope, update each TST sidebar with its own window data.
+    if (effectiveTstScope === "current" && targetWindowId === null && windows.length > 1) {
+      await Promise.all(windows.map((window) => updateTabCount(window.id, true)));
+      return;
+    }
+
+    const windowsForTst = effectiveTstScope === "current"
+      ? windows.filter((window) => window.id === resolvedTargetWindowId)
+      : windows;
+    const hasSingleWindowOverall = windows.length === 1;
     let contents = '';
 
     let windowIndex = 1;
 
     if (tabCountMethod === 1) {
-      // Iterate through each window to get tabs info
-      for (const window of windows) {
-        const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-        const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-        const totalTabsThisWindow = tabsThisWindow.length;
-
-        // Generate HTML content for this window if more than one window is open
-        if (windows.length > 1) {
-          contents += `<div style="display: flex; justify-content: center;">
-                          <div style="font-family: monospace; display: table;">
-                              <div style="display: table-row;">
-                                  <span style="display: table-cell; text-align: right; width: 40px;">Win${windowIndex}:</span>
-                                  <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 2px;">/</span>
-                                  <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 3px;">tabs</span>
-                              </div>
-                          </div>
-                      </div>`;
-
-          windowIndex++; // Increment the counter at the end of each iteration
-        }
-      }
-
-      // Add global tabs info
-      contents += `<div style="display: flex; justify-content: center;">
-                      <div style="font-family: monospace; display: table;">
+      if (hasSingleWindowOverall) {
+        contents += `<div style="display: flex; justify-content: center;">
+                        <div style="font-family: monospace; display: table;">
                           <div style="display: table-row;">
-                              <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
-                              <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 2px;">/</span>
-                              <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                            <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
+                            <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
+                            <span style="display: table-cell; padding-left: 2px;">/</span>
+                            <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
+                            <span style="display: table-cell; padding-left: 3px;">tabs</span>
                           </div>
+                        </div>
+                      </div>`;
+      } else {
+        // Iterate through each window to get tabs info
+        for (const window of windowsForTst) {
+          const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+          const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+          const totalTabsThisWindow = tabsThisWindow.length;
+
+          // Generate HTML content for this window if more than one window is open
+          if (windowsForTst.length > 1) {
+            contents += `<div style="display: flex; justify-content: center;">
+                            <div style="font-family: monospace; display: table;">
+                                <div style="display: table-row;">
+                                    <span style="display: table-cell; text-align: right; width: 40px;">Win${windowIndex}:</span>
+                                    <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
+                                    <span style="display: table-cell; padding-left: 2px;">/</span>
+                                    <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
+                                    <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                                </div>
+                            </div>
+                        </div>`;
+
+            windowIndex++; // Increment the counter at the end of each iteration
+            } else {
+              contents += `<div style="display: flex; justify-content: center;">
+                      <div style="font-family: monospace; display: table;">
+                        <div style="display: table-row;">
+                          <span style="display: table-cell; text-align: right; width: 56px;">Current:</span>
+                          <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsThisWindow}</span>
+                          <span style="display: table-cell; padding-left: 2px;">/</span>
+                          <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsThisWindow}</span>
+                          <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                        </div>
                       </div>
+                    </div>`;
+          }
+        }
+
+        // Add global tabs info
+            if (effectiveTstScope !== "current") {
+            contents += `<div style="display: flex; justify-content: center;">
+                    <div style="font-family: monospace; display: table;">
+                      <div style="display: table-row;">
+                        <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
+                        <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
+                        <span style="display: table-cell; padding-left: 2px;">/</span>
+                        <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
+                        <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                      </div>
+                    </div>
                   </div>`;
+            }
+      }
       
       // After all content pieces have been put together, add padding with extra padding to the right
       contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
@@ -328,22 +389,32 @@ const updateTabCount = async () => {
         let totalActiveTabs = 0;
         let grandTotalTabs = 0;
 
-        for (const window of windows) {
-            const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-            const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-            const totalTabsThisWindow = tabsThisWindow.length;
+        if (hasSingleWindowOverall) {
+          windowContentsHtml += `<span style="white-space: nowrap;">T: ${loadedTabsGlobal}/${totalTabsGlobal}</span>`;
+        } else {
+          for (const window of windowsForTst) {
+              const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+              const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+              const totalTabsThisWindow = tabsThisWindow.length;
 
-            // Update the total counts
-            totalActiveTabs += loadedTabsThisWindow;
-            grandTotalTabs += totalTabsThisWindow;
+              // Update the total counts
+              totalActiveTabs += loadedTabsThisWindow;
+              grandTotalTabs += totalTabsThisWindow;
 
-            // Append the string for this window into the HTML string
-            windowContentsHtml += `<span style="white-space: nowrap;">W${windowIndex}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
-            windowIndex++; // Increment the counter at the end of each iteration
+              // Append the string for this window into the HTML string
+              if (windowsForTst.length > 1) {
+                windowContentsHtml += `<span style="white-space: nowrap;">W${windowIndex}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
+              } else {
+                windowContentsHtml += `<span style="white-space: nowrap;">Current: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>`;
+              }
+              windowIndex++; // Increment the counter at the end of each iteration
+          }
+
+          // Append the total active/total tabs across all windows
+          if (effectiveTstScope !== "current") {
+              windowContentsHtml += `<span style="white-space: nowrap;">T: ${totalActiveTabs}/${grandTotalTabs}</span>`;
+          }
         }
-
-        // Append the total active/total tabs across all windows
-        windowContentsHtml += `<span style="white-space: nowrap;">T: ${totalActiveTabs}/${grandTotalTabs}</span>`;
 
         windowContentsHtml += '</div>'; // Close the adjusted div
 
@@ -352,11 +423,17 @@ const updateTabCount = async () => {
     }
 
     // Update the TST new tab button with the generated content
-    await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+    const tstPayload = {
       type: 'set-extra-contents',
       place: 'new-tab-button',
       contents: contents,
-    });
+    };
+
+    if (effectiveTstScope === "current" && resolvedTargetWindowId !== null) {
+      tstPayload.windowId = resolvedTargetWindowId;
+    }
+
+    await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', tstPayload);
 
   } catch (e) {
     console.error('Failed to update tab count', e);
@@ -372,19 +449,21 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
   switch (message.type) {
     case 'ready':
     case 'tabbar-updated':
-    case 'sidebar-show':
       console.log(new Date().toISOString() + ': Calling registerToTST() from onMessageExternal');
       registerToTST();
+      break;
+    case 'sidebar-show':
+      updateTabCount(message.windowId || null);
       break;
   }
 });
 
 // Listen for tab events
-browser.tabs.onCreated.addListener(updateTabCount);
-browser.tabs.onRemoved.addListener(updateTabCount);
-browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+browser.tabs.onCreated.addListener((tab) => updateTabCount(tab.windowId));
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => updateTabCount(removeInfo.windowId));
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if ('discarded' in changeInfo) {
-    updateTabCount();
+    updateTabCount(tab.windowId);
   }
 });
 
@@ -406,8 +485,13 @@ browser.runtime.onMessage.addListener(
 browser.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'local') return;
     
-    if (changes.badgeScopeOption) {
-        console.log('Badge scope changed:', changes.badgeScopeOption.newValue);
+    if (changes.badgeScopeOption || changes.tstScopeOption) {
+        if (changes.badgeScopeOption) {
+          console.log('Badge scope changed:', changes.badgeScopeOption.newValue);
+        }
+        if (changes.tstScopeOption) {
+          console.log('TST scope changed:', changes.tstScopeOption.newValue);
+        }
         // Recalculate badge with new scope
         updateTabCount();
     }
