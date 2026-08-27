@@ -14,7 +14,7 @@
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # New features
-- v0.9.10:
+- v0.9.10: Better support for TST 4.4.1+
   - Updated button styling and layout compatibility for Tree Style Tab 4.4.1+
   - Fixed vertical alignment and dynamic height scaling for the new tab action selector caret button
   - Added Firefox `data_collection_permissions` declaration for AMO compliance
