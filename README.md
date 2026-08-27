@@ -14,6 +14,10 @@
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # New features
+- v0.9.10:
+  - Updated button styling and layout compatibility for Tree Style Tab 4.4.1+
+  - Fixed vertical alignment and dynamic height scaling for the new tab action selector caret button
+  - Added Firefox `data_collection_permissions` declaration for AMO compliance
 - v0.9.9: Added new display option for a more compact list of information
   - Click on the addon badge and either select the original "1 line per window" option or the new "compact view" option to be shown in TST
   - The compact view will be left justified, narrow font, self-adjusting button height, window info text will not wrap, and will dynamically adjust if the sidebar is resized or the number of tabs or windows change
