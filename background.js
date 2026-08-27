@@ -19,8 +19,11 @@ const registerToTST = async () => {
   try {
     // Base CSS to include with updates
     const baseCSS = `
+      .newtab-button .label,
+      .newtab-button .label-text,
+      .newtab-button::before,
       .newtab-button::after {
-        display: none;
+        display: none !important;
       }
     
       .newtab-button {
@@ -31,7 +34,7 @@ const registerToTST = async () => {
       .newtab-button .extra-items-container {
         height: auto;
         display: contents;
-        align-items: left;
+        align-items: flex-start;
       }
 
       .newtab-button-box {
@@ -39,8 +42,25 @@ const registerToTST = async () => {
       }
     `;
 
-    // CSS to change vertical location of the newtab button caret
-    const caretCSS = `.after-tabs button.newtab-action-selector-anchor::after { margin-top: 0.3rem;)`;
+    // CSS to match anchor button height to the information box and vertically center the caret
+    const caretCSS = `
+      .after-tabs button.newtab-action-selector-anchor,
+      .after-tabs button.contextual-identities-selector-anchor {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: auto !important;
+      }
+
+      .after-tabs button.newtab-action-selector-anchor::after,
+      .after-tabs button.contextual-identities-selector-anchor::after {
+        margin: 0 !important;
+        margin-block-start: 0 !important;
+        align-self: center !important;
+      }
+    `;
 
     // Combine the base CSS with the new height CSS
     const combinedCSS = baseCSS + caretCSS;
