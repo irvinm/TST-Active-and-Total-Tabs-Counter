@@ -197,6 +197,26 @@ async function updateBadgeDisplay(tabCount) {
   }
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, match => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[match]));
+}
+
+async function getWindowCustomName(windowId) {
+  try {
+    const name = await browser.sessions.getWindowValue(windowId, 'windowName');
+    return (typeof name === 'string' && name.trim().length > 0) ? name.trim() : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 const updateTabCount = async () => {
   try {
     // Get all tabs globally
@@ -214,45 +234,61 @@ const updateTabCount = async () => {
     let windowIndex = 1;
 
     if (tabCountMethod === 1) {
-      // Iterate through each window to get tabs info
-      for (const window of windows) {
+      let tableRows = '';
+
+      if (windows.length === 1) {
+        const window = windows[0];
         const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
         const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
         const totalTabsThisWindow = tabsThisWindow.length;
+        const customName = await getWindowCustomName(window.id);
 
-        // Generate HTML content for this window if more than one window is open
-        if (windows.length > 1) {
-          contents += `<div style="display: flex; justify-content: center;">
-                          <div style="font-family: monospace; display: table;">
-                              <div style="display: table-row;">
-                                  <span style="display: table-cell; text-align: right; width: 40px;">Win${windowIndex}:</span>
-                                  <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 2px;">/</span>
-                                  <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 3px;">tabs</span>
-                              </div>
-                          </div>
+        const label = customName ? `${escapeHtml(customName)}:` : 'Total:';
+
+        tableRows += `<div style="display: table-row;">
+                        <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
+                        <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${loadedTabsThisWindow}</span>
+                        <span style="display: table-cell; padding-left: 2px;">/</span>
+                        <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${totalTabsThisWindow}</span>
+                        <span style="display: table-cell; padding-left: 3px;">tabs</span>
                       </div>`;
+      } else {
+        // Iterate through each window to get tabs info
+        for (const window of windows) {
+          const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+          const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
+          const totalTabsThisWindow = tabsThisWindow.length;
+          const customName = await getWindowCustomName(window.id);
+          const label = customName ? `${escapeHtml(customName)}:` : `Win${windowIndex}:`;
 
-          windowIndex++; // Increment the counter at the end of each iteration
+          tableRows += `<div style="display: table-row;">
+                          <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
+                          <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
+                          <span style="display: table-cell; padding-left: 2px;">/</span>
+                          <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
+                          <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                        </div>`;
+
+          windowIndex++;
         }
+
+        // Add global tabs info
+        tableRows += `<div style="display: table-row;">
+                        <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">Total:</span>
+                        <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${loadedTabsGlobal}</span>
+                        <span style="display: table-cell; padding-left: 2px;">/</span>
+                        <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${totalTabsGlobal}</span>
+                        <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                      </div>`;
       }
 
-      // Add global tabs info
-      contents += `<div style="display: flex; justify-content: center;">
+      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">
+                    <div style="display: flex; justify-content: center;">
                       <div style="font-family: monospace; display: table;">
-                          <div style="display: table-row;">
-                              <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
-                              <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 2px;">/</span>
-                              <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 3px;">tabs</span>
-                          </div>
+                        ${tableRows}
                       </div>
+                    </div>
                   </div>`;
-      
-      // After all content pieces have been put together, add padding with extra padding to the right
-      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
     }
     else if (tabCountMethod === 2) {
         // Initialize an HTML string to collect entries
@@ -270,8 +306,11 @@ const updateTabCount = async () => {
             totalActiveTabs += loadedTabsThisWindow;
             grandTotalTabs += totalTabsThisWindow;
 
+            const customName = await getWindowCustomName(window.id);
+            const label = customName ? `${escapeHtml(customName)}` : `W${windowIndex}`;
+
             // Append the string for this window into the HTML string
-            windowContentsHtml += `<span style="white-space: nowrap;">W${windowIndex}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
+            windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
             windowIndex++; // Increment the counter at the end of each iteration
         }
 
@@ -327,9 +366,9 @@ browser.windows.onRemoved.addListener(registerToTST);
 
 browser.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if (request.action === "updateBadge") {
+        if (request.action === "updateBadge" || request.action === "updateWindowNames") {
             updateTabCount();
-            sendResponse({result: "Badge updated"});
+            sendResponse({result: "Updated"});
         }
         return true; // keep the messaging channel open for sendResponse
     }
