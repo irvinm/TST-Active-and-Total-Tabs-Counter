@@ -74,8 +74,7 @@ const registerToTST = async () => {
     });
 
   } catch (e) {
-    console.error('Failed to communicate with TST', e);
-    await sleep(250).then(registerToTST);
+    console.log('TST not ready or not installed:', e.message || e);
   }
   
   let result2 = await browser.storage.local.get(['displayStyleOption']);
@@ -217,55 +216,65 @@ async function getWindowCustomName(windowId) {
   }
 }
 
-const updateTabCount = async () => {
+const updateTabCount = async (closingTabId) => {
   try {
-    // Get all tabs globally
-    const allTabs = await browser.tabs.query({});
-    const loadedTabsGlobal = allTabs.filter(tab => !tab.discarded).length;
-    const totalTabsGlobal = allTabs.length;
-    const tabCount = totalTabsGlobal.toString();
-
-    updateBadgeDisplay(tabCount);
-
-    // Get all windows
-    const windows = await browser.windows.getAll();
+    // Get all normal browser windows
+    const windows = await browser.windows.getAll({ windowTypes: ['normal'] });
     let contents = '';
+
+    // Collect per-window and global tab counts from normal windows
+    let loadedTabsGlobal = 0;
+    let totalTabsGlobal = 0;
+    const windowData = [];
+
+    for (const window of windows) {
+      let tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+      if (typeof closingTabId === 'number') {
+        tabsThisWindow = tabsThisWindow.filter(tab => tab.id !== closingTabId);
+      }
+      const loaded = tabsThisWindow.filter(tab => !tab.discarded).length;
+      const total = tabsThisWindow.length;
+      const customName = await getWindowCustomName(window.id);
+
+      loadedTabsGlobal += loaded;
+      totalTabsGlobal += total;
+
+      windowData.push({
+        id: window.id,
+        loaded,
+        total,
+        customName
+      });
+    }
+
+    const tabCount = totalTabsGlobal.toString();
+    await updateBadgeDisplay(tabCount);
 
     let windowIndex = 1;
 
     if (tabCountMethod === 1) {
       let tableRows = '';
 
-      if (windows.length === 1) {
-        const window = windows[0];
-        const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-        const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-        const totalTabsThisWindow = tabsThisWindow.length;
-        const customName = await getWindowCustomName(window.id);
-
-        const label = customName ? `${escapeHtml(customName)}:` : 'Total:';
+      if (windowData.length === 1) {
+        const win = windowData[0];
+        const label = win.customName ? `${escapeHtml(win.customName)}:` : 'Total:';
 
         tableRows += `<div style="display: table-row;">
                         <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
-                        <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${loadedTabsThisWindow}</span>
+                        <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${win.loaded}</span>
                         <span style="display: table-cell; padding-left: 2px;">/</span>
-                        <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${totalTabsThisWindow}</span>
+                        <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${win.total}</span>
                         <span style="display: table-cell; padding-left: 3px;">tabs</span>
                       </div>`;
       } else {
-        // Iterate through each window to get tabs info
-        for (const window of windows) {
-          const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-          const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-          const totalTabsThisWindow = tabsThisWindow.length;
-          const customName = await getWindowCustomName(window.id);
-          const label = customName ? `${escapeHtml(customName)}:` : `Win${windowIndex}:`;
+        for (const win of windowData) {
+          const label = win.customName ? `${escapeHtml(win.customName)}:` : `Win${windowIndex}:`;
 
           tableRows += `<div style="display: table-row;">
                           <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
-                          <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
+                          <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;" id="loadedTabsThisWindow-${win.id}">${win.loaded}</span>
                           <span style="display: table-cell; padding-left: 2px;">/</span>
-                          <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
+                          <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;" id="totalTabsThisWindow-${win.id}">${win.total}</span>
                           <span style="display: table-cell; padding-left: 3px;">tabs</span>
                         </div>`;
 
@@ -291,44 +300,30 @@ const updateTabCount = async () => {
                   </div>`;
     }
     else if (tabCountMethod === 2) {
-        // Initialize an HTML string to collect entries
-        let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
+      let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
 
-        let totalActiveTabs = 0;
-        let grandTotalTabs = 0;
+      for (const win of windowData) {
+        const label = win.customName ? `${escapeHtml(win.customName)}` : `W${windowIndex}`;
+        windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${win.loaded}/${win.total}</span>, `;
+        windowIndex++;
+      }
 
-        for (const window of windows) {
-            const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-            const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-            const totalTabsThisWindow = tabsThisWindow.length;
+      windowContentsHtml += `<span style="white-space: nowrap;">T: ${loadedTabsGlobal}/${totalTabsGlobal}</span>`;
+      windowContentsHtml += '</div>';
 
-            // Update the total counts
-            totalActiveTabs += loadedTabsThisWindow;
-            grandTotalTabs += totalTabsThisWindow;
-
-            const customName = await getWindowCustomName(window.id);
-            const label = customName ? `${escapeHtml(customName)}` : `W${windowIndex}`;
-
-            // Append the string for this window into the HTML string
-            windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
-            windowIndex++; // Increment the counter at the end of each iteration
-        }
-
-        // Append the total active/total tabs across all windows
-        windowContentsHtml += `<span style="white-space: nowrap;">T: ${totalActiveTabs}/${grandTotalTabs}</span>`;
-
-        windowContentsHtml += '</div>'; // Close the adjusted div
-
-        // Assign the HTML string to contents
-        contents = windowContentsHtml;
+      contents = windowContentsHtml;
     }
 
-    // Update the TST new tab button with the generated content
-    await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
-      type: 'set-extra-contents',
-      place: 'new-tab-button',
-      contents: contents,
-    });
+    // Update the TST new tab button with the generated content (if TST is active)
+    try {
+      await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+        type: 'set-extra-contents',
+        place: 'new-tab-button',
+        contents: contents,
+      });
+    } catch (tstErr) {
+      // TST might not be running or installed; badge display is unaffected
+    }
 
   } catch (e) {
     console.error('Failed to update tab count', e);
@@ -352,17 +347,27 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 });
 
 // Listen for tab events
-browser.tabs.onCreated.addListener(updateTabCount);
-browser.tabs.onRemoved.addListener(updateTabCount);
+browser.tabs.onCreated.addListener(() => updateTabCount());
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  updateTabCount(tabId);
+  // Also recount after a short delay in case Firefox finalizes tab closure asynchronously
+  setTimeout(() => updateTabCount(), 100);
+});
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if ('discarded' in changeInfo) {
     updateTabCount();
   }
 });
 
-// Listen for window events and update newtab button height as needed
-browser.windows.onCreated.addListener(registerToTST);
-browser.windows.onRemoved.addListener(registerToTST);
+// Listen for window events and update newtab button height and tab counts as needed
+browser.windows.onCreated.addListener(() => {
+  registerToTST();
+  updateTabCount();
+});
+browser.windows.onRemoved.addListener(() => {
+  registerToTST();
+  updateTabCount();
+});
 
 browser.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -386,13 +391,17 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Set badge text background to grey
 browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 
-//Set badge text font color to white
+// Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
 async function initializeAddon() {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  // Update badge and tab count immediately on startup
+  await getDisplayStyleOption();
+  await updateTabCount();
 
   for (let i = 0; i < 15; i++) {
     console.log(new Date().toISOString() + ': Call to registerToTST #', i);

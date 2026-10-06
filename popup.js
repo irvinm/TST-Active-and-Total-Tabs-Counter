@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         try {
             const currentWindow = await browser.windows.getCurrent();
-            const windows = await browser.windows.getAll();
+            const windows = await browser.windows.getAll({ windowTypes: ['normal'] });
 
             if (windows.length === 0) {
                 windowListContainer.textContent = 'No open windows detected.';
