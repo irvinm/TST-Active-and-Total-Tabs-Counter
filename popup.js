@@ -66,60 +66,85 @@ document.addEventListener('DOMContentLoaded', async function() {
         previewContainer.innerHTML = html;
     }
 
-    function updateSidebarPreview(selectedOption) {
+    function updateSidebarPreview(layout, scope) {
         const previewContainer = document.querySelector('#sidebar-preview');
         if (!previewContainer) return;
 
-        if (selectedOption === 'oneLinePerWindow') {
-            previewContainer.innerHTML = `
-                <div class="sidebar-preview-table">
-                    <div class="sidebar-preview-row">
-                        <span class="preview-label">Work:</span>
-                        <span class="preview-act">12</span>
-                        <span class="preview-slash">/</span>
-                        <span class="preview-tot">145</span>
-                        <span class="preview-unit">tabs</span>
+        const currentLayout = layout || (document.querySelector('input[name="displayStyleOption"]:checked')?.value || 'oneLinePerWindow');
+        const currentScope = scope || (document.querySelector('input[name="sidebarScopeOption"]:checked')?.value || 'all');
+
+        if (currentLayout === 'oneLinePerWindow') {
+            if (currentScope === 'current') {
+                previewContainer.innerHTML = `
+                    <div class="sidebar-preview-table">
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">Work:</span>
+                            <span class="preview-act">12</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">145</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
                     </div>
-                    <div class="sidebar-preview-row">
-                        <span class="preview-label">Social:</span>
-                        <span class="preview-act">8</span>
-                        <span class="preview-slash">/</span>
-                        <span class="preview-tot">210</span>
-                        <span class="preview-unit">tabs</span>
+                `;
+            } else {
+                previewContainer.innerHTML = `
+                    <div class="sidebar-preview-table">
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">*Work:</span>
+                            <span class="preview-act">12</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">145</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">Social:</span>
+                            <span class="preview-act">8</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">210</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">Win3:</span>
+                            <span class="preview-act">4</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">22</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">Win4:</span>
+                            <span class="preview-act">1</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">9</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
+                        <div class="sidebar-preview-row">
+                            <span class="preview-label">Total:</span>
+                            <span class="preview-act">25</span>
+                            <span class="preview-slash">/</span>
+                            <span class="preview-tot">386</span>
+                            <span class="preview-unit">tabs</span>
+                        </div>
                     </div>
-                    <div class="sidebar-preview-row">
-                        <span class="preview-label">Win3:</span>
-                        <span class="preview-act">4</span>
-                        <span class="preview-slash">/</span>
-                        <span class="preview-tot">22</span>
-                        <span class="preview-unit">tabs</span>
-                    </div>
-                    <div class="sidebar-preview-row">
-                        <span class="preview-label">Win4:</span>
-                        <span class="preview-act">1</span>
-                        <span class="preview-slash">/</span>
-                        <span class="preview-tot">9</span>
-                        <span class="preview-unit">tabs</span>
-                    </div>
-                    <div class="sidebar-preview-row">
-                        <span class="preview-label">Total:</span>
-                        <span class="preview-act">25</span>
-                        <span class="preview-slash">/</span>
-                        <span class="preview-tot">386</span>
-                        <span class="preview-unit">tabs</span>
-                    </div>
-                </div>
-            `;
+                `;
+            }
         } else {
-            previewContainer.innerHTML = `
-                <div class="sidebar-preview-compact">
-                    <span class="preview-item">Work: 12/145</span>, 
-                    <span class="preview-item">Social: 8/210</span>, 
-                    <span class="preview-item">W3: 4/22</span>, 
-                    <span class="preview-item">W4: 1/9</span>, 
-                    <span class="preview-item">T: 25/386</span>
-                </div>
-            `;
+            if (currentScope === 'current') {
+                previewContainer.innerHTML = `
+                    <div class="sidebar-preview-compact">
+                        <span class="preview-item">Work: 12/145</span>
+                    </div>
+                `;
+            } else {
+                previewContainer.innerHTML = `
+                    <div class="sidebar-preview-compact">
+                        <span class="preview-item">*Work: 12/145</span>, 
+                        <span class="preview-item">Social: 8/210</span>, 
+                        <span class="preview-item">W3: 4/22</span>, 
+                        <span class="preview-item">W4: 1/9</span>, 
+                        <span class="preview-item">T: 25/386</span>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -149,16 +174,30 @@ document.addEventListener('DOMContentLoaded', async function() {
         let result2 = await browser.storage.local.get(['displayStyleOption']);
         if (result2.displayStyleOption === "compactView") {
             document.getElementById(result2.displayStyleOption).checked = true;
-            updateSidebarPreview(result2.displayStyleOption);
-            updateOptionCardSelection();
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
         } else {
             await browser.storage.local.set({displayStyleOption: "oneLinePerWindow"});
             document.getElementById("oneLinePerWindow").checked = true;
-            updateSidebarPreview("oneLinePerWindow");
-            updateOptionCardSelection();
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 1 });
         }
+
+        let scopeRes = await browser.storage.local.get(['sidebarScopeOption', 'badgeScopeOption']);
+        const sidebarScope = scopeRes.sidebarScopeOption || 'all';
+        if (sidebarScope === 'current') {
+            document.getElementById('sidebarScopeCurrent').checked = true;
+        } else {
+            document.getElementById('sidebarScopeAll').checked = true;
+        }
+
+        const badgeScope = scopeRes.badgeScopeOption || 'all';
+        if (badgeScope === 'current') {
+            document.getElementById('badgeScopeCurrent').checked = true;
+        } else {
+            document.getElementById('badgeScopeAll').checked = true;
+        }
+
+        updateSidebarPreview(result2.displayStyleOption || 'oneLinePerWindow', sidebarScope);
+        updateOptionCardSelection();
 
     } catch (error) {
         console.error('Error loading or setting default options:', error);
@@ -329,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 try {
                     await browser.storage.local.set({displayStyleOption: this.id});
                     console.log('Display option saved:', this.id);
-                    updateSidebarPreview(this.id);
+                    updateSidebarPreview(this.id, null);
                     updateOptionCardSelection();
                     showStatusMessage('Display option saved!');
 
@@ -341,6 +380,39 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 } catch (error) {
                     console.error('Error saving display option or updating badge:', error);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('input[name="sidebarScopeOption"]').forEach(radio => {
+        radio.addEventListener('change', async function() {
+            if (this.checked) {
+                try {
+                    await browser.storage.local.set({sidebarScopeOption: this.value});
+                    console.log('Sidebar scope saved:', this.value);
+                    updateSidebarPreview(null, this.value);
+                    updateOptionCardSelection();
+                    showStatusMessage('Sidebar scope saved!');
+                    browser.runtime.sendMessage({ action: "updateSidebarScope", sidebarScopeOption: this.value });
+                } catch (error) {
+                    console.error('Error saving sidebar scope:', error);
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('input[name="badgeScopeOption"]').forEach(radio => {
+        radio.addEventListener('change', async function() {
+            if (this.checked) {
+                try {
+                    await browser.storage.local.set({badgeScopeOption: this.value});
+                    console.log('Badge scope saved:', this.value);
+                    updateOptionCardSelection();
+                    showStatusMessage('Badge scope saved!');
+                    browser.runtime.sendMessage({ action: "updateBadgeScope", badgeScopeOption: this.value });
+                } catch (error) {
+                    console.error('Error saving badge scope:', error);
                 }
             }
         });

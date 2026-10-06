@@ -210,9 +210,9 @@ h1 {
 /* Shared Preview Containers (Sidebar Display & Badge Counter) */
 #sidebar-preview,
 #badge-preview {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    border: 1px solid #333333;
+    background-color: #f6f8fa;
+    color: #24292f;
+    border: 1px solid #d0d7de;
     border-radius: 5px;
     padding: 8px 12px;
     margin-bottom: 12px;
@@ -221,6 +221,7 @@ h1 {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 /* Sidebar Display - Live Text Preview (Exact TST sidebar spacing) */
@@ -291,7 +292,7 @@ h1 {
 }
 .badge-caption {
     font-size: 10px;
-    color: #8b949e;
+    color: #57606a;
     font-family: monospace;
     white-space: nowrap;
 }
@@ -299,6 +300,20 @@ h1 {
     font-size: 16px;
     color: #57606a;
     margin-top: -14px;
+}
+
+/* Option Groups & Section Titles */
+.options-group {
+    margin-bottom: 12px;
+}
+.group-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #57606a;
+    margin-bottom: 6px;
+    padding-left: 2px;
 }
 
 /* Shared Option Cards (Sidebar Display & Badge Counter) */
@@ -448,6 +463,9 @@ h1 {
     :root:not([data-theme="light"]) #message {
         border-color: #424242;
     }
+    :root:not([data-theme="light"]) .group-title {
+        color: #8b949e;
+    }
     :root:not([data-theme="light"]) .option-card {
         background-color: #242424;
         border-color: #383838;
@@ -492,6 +510,16 @@ h1 {
         border-color: #58a6ff;
         box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.25);
     }
+    :root:not([data-theme="light"]) #sidebar-preview,
+    :root:not([data-theme="light"]) #badge-preview {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        border-color: #383838;
+    }
+    :root:not([data-theme="light"]) .badge-caption,
+    :root:not([data-theme="light"]) .badge-arrow {
+        color: #8b949e;
+    }
 }
 
 :root[data-theme="dark"] body {
@@ -514,6 +542,9 @@ h1 {
 }
 :root[data-theme="dark"] #message {
     border-color: #424242;
+}
+:root[data-theme="dark"] .group-title {
+    color: #8b949e;
 }
 :root[data-theme="dark"] .option-card {
     background-color: #242424;
@@ -558,4 +589,25 @@ h1 {
 :root[data-theme="dark"] .window-input:focus {
     border-color: #58a6ff;
     box-shadow: 0 0 0 2px rgba(56, 139, 253, 0.25);
+}
+:root[data-theme="dark"] #sidebar-preview,
+:root[data-theme="dark"] #badge-preview {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border-color: #383838;
+}
+:root[data-theme="dark"] .badge-caption,
+:root[data-theme="dark"] .badge-arrow {
+    color: #8b949e;
+}
+
+:root[data-theme="light"] #sidebar-preview,
+:root[data-theme="light"] #badge-preview {
+    background-color: #f6f8fa;
+    color: #24292f;
+    border-color: #d0d7de;
+}
+:root[data-theme="light"] .badge-caption,
+:root[data-theme="light"] .badge-arrow {
+    color: #57606a;
 }

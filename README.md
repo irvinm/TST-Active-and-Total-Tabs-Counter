@@ -42,12 +42,15 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 ## Version History
 
 <details open>
-<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Compact View, Tabbed UI & TST 4.4.1+ Compatibility</b></summary>
+<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Compact View, Scope Controls, Tabbed UI & TST 4.4.1+ Compatibility</b></summary>
 
 - **Custom Window Naming**: Assign custom, persistent names to Firefox windows with inline popup editing; custom window names update in real time across the TST sidebar display and persist across browser restarts.
 - **Tabbed Settings Popup UI**: Completely redesigned extension popup into an intuitive 3-tab layout (*Window Names*, *Sidebar Display*, and *Badge Counter*) with smooth transitions and compact styling.
 - **Sidebar Display Layouts**: Added support for choosing between "1 Line Per Window" (monospace table) and "Compact View" (inline continuous narrow format with auto-adjusting button height and dynamic window resizing).
-- **Layout Preview**: Added a live text preview in the popup demonstrating the selected sidebar display format.
+- **Sidebar Display Scope**: Configure whether the TST sidebar counter displays tab counts across all open windows or strictly for the current window.
+- **Current Window Indicator**: In multi-window "All Windows" mode, prepends an asterisk (`*`) to the current window's row in each sidebar to visually distinguish the active window.
+- **Toolbar Badge Scope**: Choose whether the extension toolbar badge displays the total count across all windows or the count for the current window only.
+- **Layout Preview**: Added a live text preview in the popup demonstrating the selected sidebar display format and scope.
 - **Theme & Header Controls**: Added dark/light theme switching with saved preference, direct "Open in separate tab" shortcut button, and header actions matching TST Lock design.
 - **Badge Synchronization & Standalone Mode**: Fixed badge count synchronization on browser startup, tab closures/removals, and standalone operation when Tree Style Tab is disabled or inactive.
 - **TST 4.4.1+ Compatibility & Spacing**: Updated button layout and vertical alignment for Tree Style Tab 4.4.1+ (including caret selector button alignment and exact sidebar spacing matching TST standards).

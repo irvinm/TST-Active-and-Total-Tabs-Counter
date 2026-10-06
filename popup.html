@@ -51,21 +51,43 @@
         <div id="sidebar-preview">
             <!-- Text representation of windows dynamically rendered here -->
         </div>
-        <div id="display-options-list">
-            <label class="option-card" for="oneLinePerWindow">
-                <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow">
-                <div class="option-text">
-                    <span class="option-title">1 Line Per Window</span>
-                    <span class="option-desc">Table-aligned monospace layout with one row per window and global totals</span>
-                </div>
-            </label>
-            <label class="option-card" for="compactView">
-                <input type="radio" id="compactView" name="displayStyleOption" value="compactView">
-                <div class="option-text">
-                    <span class="option-title">Compact View</span>
-                    <span class="option-desc">Inline narrow-font layout joining all window tab counts in a continuous string</span>
-                </div>
-            </label>
+        <div class="options-group">
+            <div class="group-title">Display Layout</div>
+            <div id="display-options-list">
+                <label class="option-card" for="oneLinePerWindow">
+                    <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow">
+                    <div class="option-text">
+                        <span class="option-title">1 Line Per Window</span>
+                        <span class="option-desc">Table-aligned monospace layout with one row per window and global totals</span>
+                    </div>
+                </label>
+                <label class="option-card" for="compactView">
+                    <input type="radio" id="compactView" name="displayStyleOption" value="compactView">
+                    <div class="option-text">
+                        <span class="option-title">Compact View</span>
+                        <span class="option-desc">Inline narrow layout joining window tab counts</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="options-group">
+            <div class="group-title">Display Scope</div>
+            <div id="sidebar-scope-options-list">
+                <label class="option-card" for="sidebarScopeAll">
+                    <input type="radio" id="sidebarScopeAll" name="sidebarScopeOption" value="all">
+                    <div class="option-text">
+                        <span class="option-title">All Windows</span>
+                        <span class="option-desc">Shows tab counts for each open window plus global totals</span>
+                    </div>
+                </label>
+                <label class="option-card" for="sidebarScopeCurrent">
+                    <input type="radio" id="sidebarScopeCurrent" name="sidebarScopeOption" value="current">
+                    <div class="option-text">
+                        <span class="option-title">Current Window Only</span>
+                        <span class="option-desc">Shows tab counts only for this window in its sidebar</span>
+                    </div>
+                </label>
+            </div>
         </div>
     </div>
 
@@ -74,21 +96,43 @@
         <div id="badge-preview">
             <!-- Badge preview progression dynamically rendered here -->
         </div>
-        <div id="badge-options-list">
-            <label class="option-card" for="switchToSVG">
-                <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
-                <div class="option-text">
-                    <span class="option-title">Native Badge (1–999) + SVG (1000+)</span>
-                    <span class="option-desc">Native badge text up to 999 tabs, then switches to dynamic SVG for 1000+ tabs</span>
-                </div>
-            </label>
-            <label class="option-card" for="alwaysSVG">
-                <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
-                <div class="option-text">
-                    <span class="option-title">Always Dynamic SVG</span>
-                    <span class="option-desc">Renders tab counts directly onto the icon using dynamic SVG for all tab counts</span>
-                </div>
-            </label>
+        <div class="options-group">
+            <div class="group-title">Badge Scope</div>
+            <div id="badge-scope-options-list">
+                <label class="option-card" for="badgeScopeAll">
+                    <input type="radio" id="badgeScopeAll" name="badgeScopeOption" value="all">
+                    <div class="option-text">
+                        <span class="option-title">All Windows</span>
+                        <span class="option-desc">Badge displays total tabs across all browser windows</span>
+                    </div>
+                </label>
+                <label class="option-card" for="badgeScopeCurrent">
+                    <input type="radio" id="badgeScopeCurrent" name="badgeScopeOption" value="current">
+                    <div class="option-text">
+                        <span class="option-title">Current Window Only</span>
+                        <span class="option-desc">Badge displays total tabs for that specific window</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="options-group">
+            <div class="group-title">Render Method</div>
+            <div id="badge-options-list">
+                <label class="option-card" for="switchToSVG">
+                    <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
+                    <div class="option-text">
+                        <span class="option-title">Native Badge (1–999) + SVG (1000+)</span>
+                        <span class="option-desc">Native badge up to 999 tabs, then dynamic SVG for 1000+</span>
+                    </div>
+                </label>
+                <label class="option-card" for="alwaysSVG">
+                    <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
+                    <div class="option-text">
+                        <span class="option-title">Always Dynamic SVG</span>
+                        <span class="option-desc">Renders tab counts directly onto the icon using dynamic SVG</span>
+                    </div>
+                </label>
+            </div>
         </div>
     </div>
 
