@@ -64,49 +64,29 @@ body {
     display: block;
 }
 
-/* Badge Counter Options */
-.option-group {
-    margin-bottom: 6px;
-    padding: 6px 8px;
-    border-radius: 4px;
-}
-#image-row {
-    text-align: center;
-    margin-bottom: 14px;
-}
-#image-row img, #image-row .arrow {
-    display: inline-block;
-    vertical-align: middle;
-    width: 35px;
-    height: 35px;
-}
-#image-row .arrow {
-    width: auto;
-    height: auto;
-    font-size: 24px;
-    margin-right: 5px;
-    margin-left: 5px;
-}
-
-/* Sidebar Display - Live Text Preview */
-#sidebar-preview {
+/* Shared Preview Containers (Sidebar Display & Badge Counter) */
+#sidebar-preview,
+#badge-preview {
     background-color: #1a1a1a;
     color: #e0e0e0;
     border: 1px solid #333333;
     border-radius: 5px;
-    padding: 10px 14px;
+    padding: 8px 12px;
     margin-bottom: 12px;
-    min-height: 94px;
+    min-height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
 }
+
+/* Sidebar Display - Live Text Preview (Exact TST sidebar spacing) */
 .sidebar-preview-table {
     display: table;
     font-family: monospace;
-    font-size: 11px;
-    line-height: 1.45;
+    font-size: 10px;
+    line-height: 1.15;
+    margin: 0 auto;
 }
 .sidebar-preview-row {
     display: table-row;
@@ -120,7 +100,8 @@ body {
 .preview-act {
     display: table-cell;
     text-align: right;
-    min-width: 20px;
+    padding-left: 3px;
+    min-width: 30px;
 }
 .preview-slash {
     display: table-cell;
@@ -130,26 +111,54 @@ body {
     display: table-cell;
     text-align: left;
     padding-left: 2px;
-    min-width: 26px;
+    min-width: 30px;
 }
 .preview-unit {
     display: table-cell;
     padding-left: 3px;
 }
-.preview-total {
-    font-weight: 600;
-}
 .sidebar-preview-compact {
     font-family: 'Arial Narrow', sans-serif;
-    font-size: 11px;
-    line-height: 1.45;
-    text-align: center;
+    font-size: 10px;
+    line-height: 1.2;
+    text-align: left;
 }
 .preview-item {
     white-space: nowrap;
 }
 
-/* Option Cards (Consistent with Window Names) */
+/* Badge Counter - Stage Progression Preview */
+.badge-stage-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.badge-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.badge-stage img {
+    width: 35px;
+    height: 35px;
+    display: block;
+    border-radius: 3px;
+}
+.badge-caption {
+    font-size: 10px;
+    color: #8b949e;
+    font-family: monospace;
+    white-space: nowrap;
+}
+.badge-arrow {
+    font-size: 16px;
+    color: #57606a;
+    margin-top: -14px;
+}
+
+/* Shared Option Cards (Sidebar Display & Badge Counter) */
 .option-card {
     display: flex;
     align-items: center;
@@ -298,12 +307,6 @@ body {
     }
     #message {
         border-color: #424242;
-    }
-    .option-group {
-        background-color: #333333;
-    }
-    .option-group label {
-        color: #e0e0e0;
     }
     .option-card {
         background-color: #242424;

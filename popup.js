@@ -4,32 +4,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         alwaysSVG: ['./images/SVG-9-Cropped.png', './images/SVG-99-Cropped.png', './images/SVG-999-Cropped.png', './images/SVG-1000-Cropped.png']
     };
 
-    function updateImageRow(selectedOption) {
-        const imageRow = document.querySelector('#image-row');
-        // Apply flexbox styles to center children horizontally
-        imageRow.style.display = 'flex';
-        imageRow.style.justifyContent = 'center';
-        imageRow.style.flexWrap = 'wrap'; // Optional, based on your layout needs
+    const badgeStages = [
+        { label: '1–9' },
+        { label: '10–99' },
+        { label: '100–999' },
+        { label: '1000+' }
+    ];
+
+    function updateBadgePreview(selectedOption) {
+        const previewContainer = document.querySelector('#badge-preview');
+        if (!previewContainer) return;
 
         const images = options[selectedOption];
+        if (!images) return;
 
-        while (imageRow.firstChild) {
-            imageRow.removeChild(imageRow.firstChild);
-        }
-
+        let html = '<div class="badge-stage-container">';
         images.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = '';
-            imageRow.appendChild(img);
-
+            const stageLabel = badgeStages[index] ? badgeStages[index].label : '';
+            html += `
+                <div class="badge-stage">
+                    <img src="${src}" alt="${stageLabel} tabs">
+                    <span class="badge-caption">${stageLabel}</span>
+                </div>
+            `;
             if (index < images.length - 1) {
-                const arrow = document.createElement('span');
-                arrow.innerHTML = '&rarr;';
-                arrow.className = 'arrow';
-                imageRow.appendChild(arrow);
+                html += '<span class="badge-arrow">&rarr;</span>';
             }
         });
+        html += '</div>';
+
+        previewContainer.innerHTML = html;
     }
 
     function updateSidebarPreview(selectedOption) {
@@ -47,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <span class="preview-unit">tabs</span>
                     </div>
                     <div class="sidebar-preview-row">
-                        <span class="preview-label">Research:</span>
+                        <span class="preview-label">Social:</span>
                         <span class="preview-act">8</span>
                         <span class="preview-slash">/</span>
                         <span class="preview-tot">210</span>
@@ -67,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <span class="preview-tot">9</span>
                         <span class="preview-unit">tabs</span>
                     </div>
-                    <div class="sidebar-preview-row preview-total">
+                    <div class="sidebar-preview-row">
                         <span class="preview-label">Total:</span>
                         <span class="preview-act">25</span>
                         <span class="preview-slash">/</span>
@@ -80,10 +84,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             previewContainer.innerHTML = `
                 <div class="sidebar-preview-compact">
                     <span class="preview-item">Work: 12/145</span>, 
-                    <span class="preview-item">Research: 8/210</span>, 
+                    <span class="preview-item">Social: 8/210</span>, 
                     <span class="preview-item">W3: 4/22</span>, 
                     <span class="preview-item">W4: 1/9</span>, 
-                    <span class="preview-item preview-total">T: 25/386</span>
+                    <span class="preview-item">T: 25/386</span>
                 </div>
             `;
         }
@@ -104,12 +108,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         let result = await browser.storage.local.get(['displayOption']);
         if (result.displayOption && options[result.displayOption]) {
             document.getElementById(result.displayOption).checked = true;
-            updateImageRow(result.displayOption);
+            updateBadgePreview(result.displayOption);
         } else {
             await browser.storage.local.set({displayOption: "switchToSVG"});
             document.getElementById("switchToSVG").checked = true;
-            updateImageRow("switchToSVG");
+            updateBadgePreview("switchToSVG");
         }
+        updateOptionCardSelection();
         
         let result2 = await browser.storage.local.get(['displayStyleOption']);
         if (result2.displayStyleOption === "compactView") {
@@ -275,7 +280,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 try {
                     await browser.storage.local.set({displayOption: this.id});
                     console.log('Badge counter option saved:', this.id);
-                    updateImageRow(this.id);
+                    updateBadgePreview(this.id);
+                    updateOptionCardSelection();
                     showStatusMessage('Badge counter option saved!');
 
                     let response = await browser.runtime.sendMessage({action: "updateBadge"});
