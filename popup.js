@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const options = {
         switchToSVG: ['./images/BadgeText-9-Cropped.png', './images/BadgeText-99-Cropped.png', './images/BadgeText-999-Cropped.png', './images/SVG-1000-Cropped.png'],
-        alwaysSVG: ['./images/SVG-9-Cropped.png', './images/SVG-99-Cropped.png', './images/SVG-999-Cropped.png', './images/SVG-1000-Cropped.png'],
-        oneLinePerWindow: ['./images/OneLinePerWindow.png'],
-        compactView: ['./images/CompactView.png']
+        alwaysSVG: ['./images/SVG-9-Cropped.png', './images/SVG-99-Cropped.png', './images/SVG-999-Cropped.png', './images/SVG-1000-Cropped.png']
     };
 
     function updateImageRow(selectedOption) {
@@ -34,24 +32,71 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    function updateImageRow2(selectedOption) {
-        const imageRow = document.querySelector('#image-row2');
-        // Apply flexbox styles to center children horizontally
-        imageRow.style.display = 'flex';
-        imageRow.style.justifyContent = 'center';
-        imageRow.style.flexWrap = 'wrap'; // Optional, based on your layout needs
+    function updateSidebarPreview(selectedOption) {
+        const previewContainer = document.querySelector('#sidebar-preview');
+        if (!previewContainer) return;
 
-        const images = options[selectedOption];
-
-        while (imageRow.firstChild) {
-            imageRow.removeChild(imageRow.firstChild);
+        if (selectedOption === 'oneLinePerWindow') {
+            previewContainer.innerHTML = `
+                <div class="sidebar-preview-table">
+                    <div class="sidebar-preview-row">
+                        <span class="preview-label">Work:</span>
+                        <span class="preview-act">12</span>
+                        <span class="preview-slash">/</span>
+                        <span class="preview-tot">145</span>
+                        <span class="preview-unit">tabs</span>
+                    </div>
+                    <div class="sidebar-preview-row">
+                        <span class="preview-label">Research:</span>
+                        <span class="preview-act">8</span>
+                        <span class="preview-slash">/</span>
+                        <span class="preview-tot">210</span>
+                        <span class="preview-unit">tabs</span>
+                    </div>
+                    <div class="sidebar-preview-row">
+                        <span class="preview-label">Win3:</span>
+                        <span class="preview-act">4</span>
+                        <span class="preview-slash">/</span>
+                        <span class="preview-tot">22</span>
+                        <span class="preview-unit">tabs</span>
+                    </div>
+                    <div class="sidebar-preview-row">
+                        <span class="preview-label">Win4:</span>
+                        <span class="preview-act">1</span>
+                        <span class="preview-slash">/</span>
+                        <span class="preview-tot">9</span>
+                        <span class="preview-unit">tabs</span>
+                    </div>
+                    <div class="sidebar-preview-row preview-total">
+                        <span class="preview-label">Total:</span>
+                        <span class="preview-act">25</span>
+                        <span class="preview-slash">/</span>
+                        <span class="preview-tot">386</span>
+                        <span class="preview-unit">tabs</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            previewContainer.innerHTML = `
+                <div class="sidebar-preview-compact">
+                    <span class="preview-item">Work: 12/145</span>, 
+                    <span class="preview-item">Research: 8/210</span>, 
+                    <span class="preview-item">W3: 4/22</span>, 
+                    <span class="preview-item">W4: 1/9</span>, 
+                    <span class="preview-item preview-total">T: 25/386</span>
+                </div>
+            `;
         }
+    }
 
-        images.forEach((src, index) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = '';
-            imageRow.appendChild(img);
+    function updateOptionCardSelection() {
+        document.querySelectorAll('.option-card').forEach(card => {
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio && radio.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
         });
     }
 
@@ -69,12 +114,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         let result2 = await browser.storage.local.get(['displayStyleOption']);
         if (result2.displayStyleOption === "compactView") {
             document.getElementById(result2.displayStyleOption).checked = true;
-            updateImageRow2(result2.displayStyleOption);
+            updateSidebarPreview(result2.displayStyleOption);
+            updateOptionCardSelection();
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 2 });
         } else {
             await browser.storage.local.set({displayStyleOption: "oneLinePerWindow"});
             document.getElementById("oneLinePerWindow").checked = true;
-            updateImageRow2("oneLinePerWindow");
+            updateSidebarPreview("oneLinePerWindow");
+            updateOptionCardSelection();
             browser.runtime.sendMessage({ action: "setTabCountMethod", tabCountMethod: 1 });
         }
 
@@ -246,7 +293,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 try {
                     await browser.storage.local.set({displayStyleOption: this.id});
                     console.log('Display option saved:', this.id);
-                    updateImageRow2(this.id);
+                    updateSidebarPreview(this.id);
+                    updateOptionCardSelection();
                     showStatusMessage('Display option saved!');
 
                     if (this.id === "oneLinePerWindow") {

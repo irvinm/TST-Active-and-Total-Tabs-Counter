@@ -26,14 +26,24 @@
 
     <!-- Tab 2: Sidebar Display -->
     <div id="tab-sidebar-display" class="tab-content">
-        <div id="image-row2"></div>
-        <div class="option-group2" data-option="oneLinePerWindow">
-            <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow" title="Table aligned, 1 row per info element, monospace font, maintains table up to 9999 tabs, Format -> Label: xxxx / yyyy tabs">
-            <label for="oneLinePerWindow" title="Format -> Label: xxxx / yyyy tabs, table aligned, monospace font, maintains alignment up to 9999 tabs">Use 1 line of information per window</label><br>
+        <div id="sidebar-preview">
+            <!-- Text representation of windows dynamically rendered here -->
         </div>
-        <div class="option-group2" data-option="compactView">
-            <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
-            <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
+        <div id="display-options-list">
+            <label class="option-card" for="oneLinePerWindow">
+                <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow">
+                <div class="option-text">
+                    <span class="option-title">1 Line Per Window</span>
+                    <span class="option-desc">Table-aligned monospace layout with one row per window and global totals</span>
+                </div>
+            </label>
+            <label class="option-card" for="compactView">
+                <input type="radio" id="compactView" name="displayStyleOption" value="compactView">
+                <div class="option-text">
+                    <span class="option-title">Compact View</span>
+                    <span class="option-desc">Inline narrow-font layout joining all window tab counts in a continuous string</span>
+                </div>
+            </label>
         </div>
     </div>
 

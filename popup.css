@@ -64,37 +64,129 @@ body {
     display: block;
 }
 
-.option-group, .option-group2 {
+/* Badge Counter Options */
+.option-group {
     margin-bottom: 6px;
     padding: 6px 8px;
     border-radius: 4px;
 }
-#message {
-    margin-top: 10px;
-    min-height: 20px;
-    font-size: 12px;
+#image-row {
     text-align: center;
-    border: 1px solid transparent;
-    border-color: #424242; /* Slightly visible border in dark mode */
-    padding: 4px 8px;
-    border-radius: 3px;
-}
-#image-row, #image-row2 {
-    text-align: center; /* Center the images */
-    margin-bottom: 14px; /* Add some space between the images and the options */
+    margin-bottom: 14px;
 }
 #image-row img, #image-row .arrow {
     display: inline-block;
-    vertical-align: middle; /* Aligns the images and arrows vertically in the middle */
-    width: 35px; /* Adjust width as needed */
-    height: 35px; /* Adjust height as needed */
+    vertical-align: middle;
+    width: 35px;
+    height: 35px;
 }
 #image-row .arrow {
-    width: auto; /* Auto width for arrows */
-    height: auto; /* Auto height for arrows */
-    font-size: 24px; /* Adjust the size of the arrow as needed */
-    margin-right: 5px; /* Consistent spacing with images */
-    margin-left: 5px; /* Consistent spacing with images */
+    width: auto;
+    height: auto;
+    font-size: 24px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+/* Sidebar Display - Live Text Preview */
+#sidebar-preview {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid #333333;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    min-height: 94px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+.sidebar-preview-table {
+    display: table;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.45;
+}
+.sidebar-preview-row {
+    display: table-row;
+}
+.preview-label {
+    display: table-cell;
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 6px;
+}
+.preview-act {
+    display: table-cell;
+    text-align: right;
+    min-width: 20px;
+}
+.preview-slash {
+    display: table-cell;
+    padding-left: 2px;
+}
+.preview-tot {
+    display: table-cell;
+    text-align: left;
+    padding-left: 2px;
+    min-width: 26px;
+}
+.preview-unit {
+    display: table-cell;
+    padding-left: 3px;
+}
+.preview-total {
+    font-weight: 600;
+}
+.sidebar-preview-compact {
+    font-family: 'Arial Narrow', sans-serif;
+    font-size: 11px;
+    line-height: 1.45;
+    text-align: center;
+}
+.preview-item {
+    white-space: nowrap;
+}
+
+/* Option Cards (Consistent with Window Names) */
+.option-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.option-card:hover {
+    background-color: #f0f2f5;
+}
+.option-card input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+.option-card.selected,
+.option-card:has(input[type="radio"]:checked) {
+    border-color: #0969da;
+    background-color: rgba(9, 105, 218, 0.05);
+}
+.option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.option-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #24292f;
+}
+.option-desc {
+    font-size: 11px;
+    color: #57606a;
 }
 
 /* Window Names Section (1 row per window) */
@@ -169,6 +261,19 @@ body {
     box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
 }
 
+/* Status Message */
+#message {
+    margin-top: 10px;
+    min-height: 20px;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid transparent;
+    border-color: #424242;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #121212;
@@ -192,13 +297,31 @@ body {
         border-bottom-color: #58a6ff;
     }
     #message {
-        border-color: #424242; /* Slightly visible border in dark mode */
+        border-color: #424242;
     }
-    .option-group, .option-group2 {
+    .option-group {
         background-color: #333333;
     }
-    .option-group label, .option-group2 label {
+    .option-group label {
         color: #e0e0e0;
+    }
+    .option-card {
+        background-color: #242424;
+        border-color: #383838;
+    }
+    .option-card:hover {
+        background-color: #2a2a2a;
+    }
+    .option-card.selected,
+    .option-card:has(input[type="radio"]:checked) {
+        border-color: #58a6ff;
+        background-color: rgba(88, 166, 255, 0.1);
+    }
+    .option-title {
+        color: #f0f0f0;
+    }
+    .option-desc {
+        color: #8b949e;
     }
     .window-row {
         background-color: #242424;
