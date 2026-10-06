@@ -1,15 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tab Counter Options</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TST Active and Total Tabs Counter Settings</title>
     <link rel="stylesheet" href="popup.css">
 </head>
-<body>
-    <header class="popup-header">
-        <img src="images/icon.png" alt="" class="popup-header-icon">
-        <h1 class="popup-header-title">TST Active and Total Tabs Counter</h1>
-    </header>
+<body class="popup-view">
+    <div class="container">
+        <header class="header">
+            <div class="header-main">
+                <img src="images/icon.png" alt="TST Active and Total Tabs Counter Icon" class="header-icon">
+                <div>
+                    <h1>TST Active and Total Tabs Counter</h1>
+                    <p class="subtitle">Customize tab counter display for Tree Style Tab</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button type="button" id="page-theme-btn" class="icon-link-btn" title="Switch to dark theme" aria-label="Toggle page theme">
+                    <span id="page-theme-icon" class="theme-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                </button>
+                <button type="button" id="open-tab-btn" class="icon-link-btn" title="Open in separate tab" aria-label="Open in separate tab">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.5 2.5A1.5 1.5 0 0 1 3 1h4a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V9a.5.5 0 0 1 1 0v4a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13v-10z"/>
+                        <path d="M10 .5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V1.707L8.854 7.854a.5.5 0 1 1-.708-.708L14.293 1H10.5a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
 
     <nav class="tab-nav">
         <button type="button" class="tab-button active" data-tab="tab-window-names">Window Names</button>
@@ -70,7 +92,8 @@
         </div>
     </div>
 
-    <div id="message"></div>
+        <div id="message"></div>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>

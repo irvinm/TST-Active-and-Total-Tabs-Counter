@@ -1,3 +1,33 @@
+const SUN_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const MOON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+let currentPageTheme = "light";
+
+function applyPageTheme(theme, save = false) {
+    currentPageTheme = theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", currentPageTheme);
+
+    const pageThemeBtn = document.getElementById("page-theme-btn");
+    const pageThemeIcon = document.getElementById("page-theme-icon");
+    if (pageThemeBtn && pageThemeIcon) {
+        if (currentPageTheme === "dark") {
+            pageThemeIcon.innerHTML = SUN_SVG;
+            pageThemeBtn.title = "Switch to light theme";
+            pageThemeBtn.setAttribute("aria-label", "Switch to light theme");
+        } else {
+            pageThemeIcon.innerHTML = MOON_SVG;
+            pageThemeBtn.title = "Switch to dark theme";
+            pageThemeBtn.setAttribute("aria-label", "Switch to dark theme");
+        }
+    }
+
+    if (save && typeof browser !== "undefined" && browser.storage && browser.storage.local) {
+        browser.storage.local.set({ pageTheme: currentPageTheme }).catch((err) => {
+            console.warn("Failed to save pageTheme:", err);
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     const options = {
         switchToSVG: ['./images/BadgeText-9-Cropped.png', './images/BadgeText-99-Cropped.png', './images/BadgeText-999-Cropped.png', './images/SVG-1000-Cropped.png'],
@@ -332,6 +362,58 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     });
 
+    // Header Actions: Theme Toggle & Open in Tab
+    const pageThemeBtn = document.getElementById('page-theme-btn');
+    if (pageThemeBtn) {
+        pageThemeBtn.addEventListener('click', () => {
+            const nextTheme = currentPageTheme === 'dark' ? 'light' : 'dark';
+            applyPageTheme(nextTheme, true);
+        });
+    }
+
+    try {
+        const stored = await browser.storage.local.get('pageTheme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = stored && stored.pageTheme ? stored.pageTheme : (prefersDark ? 'dark' : 'light');
+        applyPageTheme(initialTheme, false);
+    } catch (_) {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyPageTheme(prefersDark ? 'dark' : 'light', false);
+    }
+
+    const openTabBtn = document.getElementById('open-tab-btn');
+    if (openTabBtn) {
+        openTabBtn.addEventListener('click', () => {
+            const url = (typeof browser !== 'undefined' && browser.runtime && browser.runtime.getURL)
+                ? browser.runtime.getURL('popup.html?mode=tab')
+                : 'popup.html?mode=tab';
+
+            if (typeof browser !== 'undefined' && browser.tabs && browser.tabs.create) {
+                browser.tabs.create({ url }).finally(() => {
+                    window.close();
+                });
+            } else {
+                window.open(url, '_blank');
+                window.close();
+            }
+        });
+    }
+
+    // Check if opened in full tab
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'tab' || window.innerWidth > 550) {
+        document.body.classList.remove('popup-view');
+        document.body.classList.add('tab-view');
+    }
+
     // Populate the window names editor
     await loadWindowList();
 });
+
+if (typeof browser !== 'undefined' && browser.storage && browser.storage.onChanged) {
+    browser.storage.onChanged.addListener((changes) => {
+        if (changes && changes.pageTheme && changes.pageTheme.newValue) {
+            applyPageTheme(changes.pageTheme.newValue, false);
+        }
+    });
+}
