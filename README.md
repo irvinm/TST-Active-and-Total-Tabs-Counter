@@ -13,19 +13,6 @@
 - Enable the extension to interact with TST in Private Windows
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
-# New features
-- v0.9.10: Better support for TST 4.4.1+
-  - Updated button styling and layout compatibility for Tree Style Tab 4.4.1+
-  - Fixed vertical alignment and dynamic height scaling for the new tab action selector caret button
-  - Added Firefox `data_collection_permissions` declaration for AMO compliance
-- v0.9.9: Added new display option for a more compact list of information
-  - Click on the addon badge and either select the original "1 line per window" option or the new "compact view" option to be shown in TST
-  - The compact view will be left justified, narrow font, self-adjusting button height, window info text will not wrap, and will dynamically adjust if the sidebar is resized or the number of tabs or windows change
-  - ![Compact Example](https://github.com/user-attachments/assets/aadc049d-012d-4ff0-85dd-b0f36bb572d3)
-- v0.9.8: Clicking on the badge icon will allow the user to choose the badge rendering method they want to use.
-  - Option 1:  Native tab counter up to 999 tabs ![Native up to 999 tabs](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/BadgeText-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
-  - Option 2:  SVG rendering up to 999 tabs ![SVG with 999](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-999-Cropped.png), SVG with more than 1000 tabs ![SVG with 1000](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/blob/main/images/SVG-1000-Cropped.png)
-
 # History of the problem
 Older versions of TST could accomplish this with some counting CSS code.  However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
 
@@ -46,8 +33,95 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 ### 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
 ![3Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/901d2e6d-8a16-48d1-b3be-6ba595111b9a)
 
-## Compact mode (v0.9.9+)
+## Compact mode (v1.1.0+)
 ### 1 line per window
 ![image](https://github.com/user-attachments/assets/4f256b5c-5c2c-42ac-ac69-5c75a31a6870)
 ### Compact mode
 ![image](https://github.com/user-attachments/assets/aadc049d-012d-4ff0-85dd-b0f36bb572d3)
+
+## Version History
+
+<details open>
+<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Compact View, Tabbed UI & TST 4.4.1+ Compatibility</b></summary>
+
+- **Custom Window Naming**: Assign custom, persistent names to Firefox windows with inline popup editing; custom window names update in real time across the TST sidebar display and persist across browser restarts.
+- **Tabbed Settings Popup UI**: Completely redesigned extension popup into an intuitive 3-tab layout (*Window Names*, *Sidebar Display*, and *Badge Counter*) with smooth transitions and compact styling.
+- **Sidebar Display Layouts**: Added support for choosing between "1 Line Per Window" (monospace table) and "Compact View" (inline continuous narrow format with auto-adjusting button height and dynamic window resizing).
+- **Layout Preview**: Added a live text preview in the popup demonstrating the selected sidebar display format.
+- **Theme & Header Controls**: Added dark/light theme switching with saved preference, direct "Open in separate tab" shortcut button, and header actions matching TST Lock design.
+- **Badge Synchronization & Standalone Mode**: Fixed badge count synchronization on browser startup, tab closures/removals, and standalone operation when Tree Style Tab is disabled or inactive.
+- **TST 4.4.1+ Compatibility & Spacing**: Updated button layout and vertical alignment for Tree Style Tab 4.4.1+ (including caret selector button alignment and exact sidebar spacing matching TST standards).
+- **Manifest & Security**: Added `sessions` and `tabs` permissions for window naming and synchronization, and declared Firefox `data_collection_permissions` for AMO compliance.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.8 (July 1, 2024) - Dynamic SVG Badge Rendering & Security Hardening</b></summary>
+
+- **Dynamic SVG Badge**: Added dynamic SVG rendering for toolbar badge counts to cleanly display counts of 1,000+ tabs beyond native badge 3-character limitations.
+- **Badge Render Modes**: Allowed choosing between Native (1–999) + SVG (1000+) or Always SVG rendering.
+- **Security Hardening**: Replaced `innerHTML` usage with safe DOM manipulation to address AMO security warnings.
+- **Build Pipeline**: Included popup assets into the extension packaging build scripts.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.7 (June 23, 2024) - Diagnostic Logging & Link Fixes</b></summary>
+
+- **Logging & Timing**: Added structured diagnostic logging and adjusted retry sleep schedule.
+- **Documentation**: Fixed counter badge image URLs in README.md.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.6 (June 23, 2024) - Async Optimization</b></summary>
+
+- **Async Timing**: Added `await` to asynchronous sleep calls and removed redundant `updateTabCount()` invocations.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.5 (June 23, 2024) - Extended Startup Retries</b></summary>
+
+- **Startup Resiliency**: Extended startup retry attempts up to 15 seconds to ensure reliable connection with Tree Style Tab during delayed browser starts.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.4 (June 23, 2024) - Initial State Synchronization</b></summary>
+
+- **State Timing**: Added delayed calls to ensure initial tab state is properly loaded into TST.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.3 (June 23, 2024) - Secondary Registration Fallback</b></summary>
+
+- **Registration Fallback**: Added a 3-second delayed secondary registration call to resolve intermittent startup communication issues.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.2 (June 23, 2024) - Registration Retry Logic</b></summary>
+
+- **Connection Resiliency**: Added retry logic if initial registration with Tree Style Tab fails.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.1 (June 23, 2024) - Registration Identifier</b></summary>
+
+- **Registration Metadata**: Updated extension registration name used during TST communication.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.0 (June 22, 2024) - Initial Release</b></summary>
+
+- **Core Functionality**: Injected active and total tab counter display into the Tree Style Tab sidebar above the new-tab button.
+- **Multi-Window Counting**: Tracked active (non-discarded) and total tabs per window and across all open windows.
+- **Toolbar Badge**: Added dynamic badge counter to the extension toolbar button displaying total tabs.
+- **Build & CI Automation**: Established automated XPI build scripts and GitHub Actions CI/CD pipeline.
+
+</details>
+
