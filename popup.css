@@ -1,12 +1,76 @@
 body {
-    min-width: 420px;
+    width: 440px;
+    max-width: 440px;
+    box-sizing: border-box;
+    margin: 10px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+
+/* Header */
+.popup-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+}
+.popup-header-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+.popup-header-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+    color: #24292f;
+}
+
+/* Navigation Tabs */
+.tab-nav {
+    display: flex;
+    border-bottom: 2px solid #d0d7de;
+    margin-bottom: 12px;
+    gap: 4px;
+}
+.tab-button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #57606a;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+.tab-button:hover {
+    color: #24292f;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+.tab-button.active {
+    color: #0969da;
+    border-bottom-color: #0969da;
+    font-weight: 600;
+}
+
+/* Tab Content Visibility */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
 .option-group, .option-group2 {
-    margin-bottom: 5px; /* Reduce the bottom margin to decrease space */
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    border-radius: 4px;
 }
 #message {
-    margin-top: 1.2em;
+    margin-top: 10px;
     min-height: 20px;
     font-size: 12px;
     text-align: center;
@@ -17,7 +81,7 @@ body {
 }
 #image-row, #image-row2 {
     text-align: center; /* Center the images */
-    margin-bottom: 20px; /* Add some space between the images and the options */
+    margin-bottom: 14px; /* Add some space between the images and the options */
 }
 #image-row img, #image-row .arrow {
     display: inline-block;
@@ -35,20 +99,19 @@ body {
 
 /* Window Names Section (1 row per window) */
 #window-list {
-    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 }
 .window-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 6px 10px;
+    padding: 5px 8px;
     background-color: #f6f8fa;
     border: 1px solid #d0d7de;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 .window-info {
     display: flex;
@@ -75,6 +138,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    max-width: 140px;
     min-width: 0;
     flex: 1;
 }
@@ -89,10 +153,10 @@ body {
     flex-shrink: 0;
 }
 .window-input {
-    width: 140px;
+    width: 130px;
     flex-shrink: 0;
     box-sizing: border-box;
-    padding: 5px 8px;
+    padding: 4px 8px;
     font-size: 12px;
     border: 1px solid #d0d7de;
     border-radius: 4px;
@@ -110,12 +174,28 @@ body {
         background-color: #121212;
         color: #e0e0e0;
     }
+    .popup-header-title {
+        color: #f0f0f0;
+    }
+    .tab-nav {
+        border-bottom-color: #383838;
+    }
+    .tab-button {
+        color: #8b949e;
+    }
+    .tab-button:hover {
+        color: #e0e0e0;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .tab-button.active {
+        color: #58a6ff;
+        border-bottom-color: #58a6ff;
+    }
     #message {
         border-color: #424242; /* Slightly visible border in dark mode */
     }
     .option-group, .option-group2 {
         background-color: #333333;
-        padding: 5px;
     }
     .option-group label, .option-group2 label {
         color: #e0e0e0;

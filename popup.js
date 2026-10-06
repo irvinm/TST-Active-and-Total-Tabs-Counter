@@ -154,9 +154,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                 tabCountSpan.textContent = `(${loadedCount}/${totalCount} tabs)`;
                 infoDiv.appendChild(tabCountSpan);
 
+                // Truncate active tab title if very long to keep row width compact
+                const MAX_TITLE_LENGTH = 28;
+                let displayTitle = activeTitle;
+                if (displayTitle.length > MAX_TITLE_LENGTH) {
+                    displayTitle = displayTitle.substring(0, MAX_TITLE_LENGTH - 3) + '...';
+                }
+
                 const titleSpan = document.createElement('span');
                 titleSpan.className = 'window-title';
-                titleSpan.textContent = activeTitle;
+                titleSpan.textContent = displayTitle;
+                titleSpan.title = activeTitle;
                 infoDiv.appendChild(titleSpan);
 
                 if (isCurrent) {
@@ -250,6 +258,22 @@ document.addEventListener('DOMContentLoaded', async function() {
                 } catch (error) {
                     console.error('Error saving display option or updating badge:', error);
                 }
+            }
+        });
+    });
+
+    // Navigation tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTabId = button.getAttribute('data-tab');
+
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            button.classList.add('active');
+            const targetContent = document.getElementById(targetTabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
             }
         });
     });

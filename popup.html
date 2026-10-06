@@ -6,33 +6,52 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <h2>Badge Counter Options (Total Tabs)</h2>
-    <div id="image-row"></div> <!-- Images will be dynamically inserted here -->
-    <form id="optionsForm">
-        <!-- Removed nativeBadge option -->
-        <div class="option-group" data-option="switchToSVG">
-            <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
-            <label for="switchToSVG">Use native badge counter for 1-999 tabs then SVG for 1000+ tabs</label><br>
+    <header class="popup-header">
+        <img src="images/icon.png" alt="" class="popup-header-icon">
+        <h1 class="popup-header-title">TST Active and Total Tabs Counter</h1>
+    </header>
+
+    <nav class="tab-nav">
+        <button type="button" class="tab-button active" data-tab="tab-window-names">Window Names</button>
+        <button type="button" class="tab-button" data-tab="tab-sidebar-display">Sidebar Display</button>
+        <button type="button" class="tab-button" data-tab="tab-badge-counter">Badge Counter</button>
+    </nav>
+
+    <!-- Tab 1: Window Names -->
+    <div id="tab-window-names" class="tab-content active">
+        <div id="window-list">
+            <!-- Open windows and editable names will be dynamically populated here -->
         </div>
-        <div class="option-group" data-option="alwaysSVG">
-            <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
-            <label for="alwaysSVG">Always use dynamic SVG creation</label><br>
+    </div>
+
+    <!-- Tab 2: Sidebar Display -->
+    <div id="tab-sidebar-display" class="tab-content">
+        <div id="image-row2"></div>
+        <div class="option-group2" data-option="oneLinePerWindow">
+            <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow" title="Table aligned, 1 row per info element, monospace font, maintains table up to 9999 tabs, Format -> Label: xxxx / yyyy tabs">
+            <label for="oneLinePerWindow" title="Format -> Label: xxxx / yyyy tabs, table aligned, monospace font, maintains alignment up to 9999 tabs">Use 1 line of information per window</label><br>
         </div>
-    </form>
-    <h2>Display Options</h2>
-    <div id="image-row2"></div> <!-- Images will be dynamically inserted here -->
-    <div class="option-group2" data-option="oneLinePerWindow">
-        <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow" title="Table aligned, 1 row per info element, monospace font, maintains table up to 9999 tabs, Format -> Label: xxxx / yyyy tabs">
-        <label for="oneLinePerWindow" title="Format -> Label: xxxx / yyyy tabs, table aligned, monospace font, maintains alignment up to 9999 tabs">Use 1 line of information per window</label><br>
+        <div class="option-group2" data-option="compactView">
+            <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
+            <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
+        </div>
     </div>
-    <div class="option-group2" data-option="compactView">
-        <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
-        <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
+
+    <!-- Tab 3: Badge Counter -->
+    <div id="tab-badge-counter" class="tab-content">
+        <div id="image-row"></div>
+        <form id="optionsForm">
+            <div class="option-group" data-option="switchToSVG">
+                <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
+                <label for="switchToSVG">Use native badge counter for 1-999 tabs then SVG for 1000+ tabs</label><br>
+            </div>
+            <div class="option-group" data-option="alwaysSVG">
+                <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
+                <label for="alwaysSVG">Always use dynamic SVG creation</label><br>
+            </div>
+        </form>
     </div>
-    <h2>Window Names</h2>
-    <div id="window-list">
-        <!-- Open windows and editable names will be dynamically populated here -->
-    </div>
+
     <div id="message"></div>
     <script src="popup.js"></script>
 </body>
