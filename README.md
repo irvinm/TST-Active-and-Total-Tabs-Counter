@@ -2,10 +2,12 @@
 
 # TST Active and Total Tabs Counter
 ### This project is to help track and display:
-- Active (non-discarded) tabs per window
-- Total active tabs across all windows
-- Total tabs per window
-- Total tabs across all windows
+- Active (non-discarded) tabs per window and across all windows
+- Total tabs per window and across all windows
+- Custom, persistent window names across the sidebar and popup settings
+- Configurable sidebar and badge display scopes (All Windows or Current Window Only)
+- Active window marker (`*`) in multi-window sidebar displays
+- Choice between monospace table ("1 Line Per Window") and continuous inline ("Compact View") layouts
 
 ### To enable this extension to work within Private Windows
 - Enable the extension itself to "Allow" to "Run in Private Windows"
@@ -14,15 +16,16 @@
     - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
 
 # History of the problem
-Older versions of TST could accomplish this with some counting CSS code.  However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
+Older versions of TST could accomplish this with some counting CSS code. However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
 
-This addon tracks the number of active tabs and total tabs to be displayed on top of the "newtab button" inside the TST sidebar.  
-- If there is only 1 window, there will only be one line with (active tabs) / (total tabs).
-- If there are multiple windows, each window's information is shown on a separate line followed by the totals.
+This addon tracks the number of active tabs and total tabs to be displayed directly on top of the "new tab button" inside the Tree Style Tab sidebar, as well as on the browser toolbar badge.
+- **Sidebar Scope**: Show tab counts across all windows (with the current window marked with `*`) or scoped strictly to the current window.
+- **Display Layout**: Choose between the table-aligned "1 Line Per Window" format or the space-saving "Compact View".
+- **Custom Window Names**: Assign persistent names to windows via the extension popup.
 
 Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-material" title="school-material icons">School-material icons created by Freepik - Flaticon</a>
 
-# Examples (1 line per window vs. Compact mode)
+# Examples
 ## 1 line per window
 ### 1 Window (Total only - 4 Active, 108 Total)
 ![1Window](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/d13c8d87-d1e2-4474-aef9-74cc680fbedb)
@@ -33,7 +36,7 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 ### 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
 ![3Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/901d2e6d-8a16-48d1-b3be-6ba595111b9a)
 
-## Compact mode (v1.1.0+)
+## Layout Comparison (v1.1.0+)
 ### 1 line per window
 ![image](https://github.com/user-attachments/assets/4f256b5c-5c2c-42ac-ac69-5c75a31a6870)
 ### Compact mode
