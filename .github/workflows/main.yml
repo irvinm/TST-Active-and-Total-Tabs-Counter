@@ -26,3 +26,4 @@ jobs:
       with:
         name: TST-Active-and-Total-Tabs-Counter.xpi
         path: web-ext-artifacts/tst-active-and-total-tabs-counter.xpi
+        if-no-files-found: error
