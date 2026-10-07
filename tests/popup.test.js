@@ -22,14 +22,18 @@ describe("TST Active and Total Tabs Counter - Popup UI", () => {
   let storageChangedCallback;
   let spies;
 
+  /** Advance 50 microtask turns so pending mocked browser operations can settle. */
   const flushPromises = async () => {
     for (let i = 0; i < 50; i++) {
       await Promise.resolve();
     }
   };
 
+  /** Return the first popup element matching a CSS selector. */
   const $ = (selector) => document.querySelector(selector);
+  /** Return an array of popup elements matching a CSS selector. */
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+  /** Return an element's text with whitespace collapsed for readable assertions. */
   const text = (selector) => $(selector).textContent.replace(/\s+/g, " ").trim();
 
   /** Define the open windows: [{ id, name?, tabs: [{ title?, active?, discarded? }] }] */
@@ -489,6 +493,7 @@ describe("TST Active and Total Tabs Counter - Popup UI", () => {
   });
 
   describe("Window names", () => {
+    /** Configure two named browser windows with mixed tab states for name-editor tests. */
     const twoWindows = () =>
       setupWindows(
         [

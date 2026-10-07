@@ -28,6 +28,7 @@ describe("TST Active and Total Tabs Counter - Background Script", () => {
   let logSpy;
   let errorSpy;
 
+  /** Advance 50 microtask turns so pending mocked browser operations can settle. */
   const flushPromises = async () => {
     for (let i = 0; i < 50; i++) {
       await Promise.resolve();
@@ -73,6 +74,7 @@ describe("TST Active and Total Tabs Counter - Background Script", () => {
       .trim();
   }
 
+  /** Return recorded TST registration calls from the runtime message mock. */
   const registerCalls = () =>
     mockSendMessage.mock.calls.filter(([, msg]) => msg.type === "register-self");
 
@@ -166,6 +168,7 @@ describe("TST Active and Total Tabs Counter - Background Script", () => {
     errorSpy.mockRestore();
   });
 
+  /** Load the background script and flush pending startup microtasks. */
   async function loadBackground() {
     require("../background.js");
     await flushPromises();
@@ -352,7 +355,9 @@ describe("TST Active and Total Tabs Counter - Background Script", () => {
   });
 
   describe("SVG badge display", () => {
+    /** Decode the SVG payload from an icon data URL for markup assertions. */
     const decodeIcon = (path) => decodeURIComponent(path.slice(path.indexOf(",") + 1));
+    /** Return setIcon details containing SVG data URLs, excluding default-icon updates. */
     const svgIconCalls = () =>
       mockSetIcon.mock.calls
         .map(([details]) => details)

@@ -14,7 +14,7 @@ getDisplayStyleOption();
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
-// Register the addon with TST
+/** Register sidebar styles and events with TST, restore the layout, and request a recount. */
 const registerToTST = async () => {
   try {
     // Base CSS to include with updates
@@ -89,6 +89,10 @@ const registerToTST = async () => {
   updateTabCount();
 };
 
+/**
+ * Read the badge rendering preference, mapping unset and legacy values to switchToSVG.
+ * @returns {Promise<string>} The selected rendering mode.
+ */
 async function getDisplayOption() {
   const { displayOption } = await browser.storage.local.get('displayOption');
   // 'nativeBadge' is a legacy value with no option in the popup; it is the same as
@@ -97,17 +101,29 @@ async function getDisplayOption() {
   return displayOption;
 }
 
+/**
+ * Read the badge scope, defaulting to all windows.
+ * @returns {Promise<string>} The stored scope or "all".
+ */
 async function getBadgeScopeOption() {
   const { badgeScopeOption } = await browser.storage.local.get('badgeScopeOption');
   return badgeScopeOption || 'all';
 }
 
+/**
+ * Read the sidebar scope, defaulting to all windows.
+ * @returns {Promise<string>} The stored scope or "all".
+ */
 async function getSidebarScopeOption() {
   const { sidebarScopeOption } = await browser.storage.local.get('sidebarScopeOption');
   return sidebarScopeOption || 'all';
 }
 
-// Function to render the badge using SVG
+/**
+ * Set the toolbar icon to an SVG containing the tab count.
+ * @param {number|string} tabCount - Total tabs to display.
+ * @param {number|null} [targetWindowId=null] - Window to update, or null for the global icon.
+ */
 function svgRenderBadge(tabCount, targetWindowId = null) {
   const svgIconBase = `
     <svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
@@ -178,6 +194,12 @@ function svgRenderBadge(tabCount, targetWindowId = null) {
   browser.browserAction.setIcon(iconDetails);
 }
 
+/**
+ * Apply the saved rendering mode to the toolbar icon and badge text.
+ * @param {number|string} tabCount - Total tabs to display.
+ * @param {number|null} [targetWindowId=null] - Window to update, or null for global defaults.
+ * @returns {Promise<void>} Resolves after the awaited toolbar updates finish.
+ */
 async function updateBadgeDisplay(tabCount, targetWindowId = null) {
   const displayOption = await getDisplayOption();
   const countNum = parseInt(tabCount, 10) || 0;
@@ -206,6 +228,11 @@ async function updateBadgeDisplay(tabCount, targetWindowId = null) {
   }
 }
 
+/**
+ * Escape characters that could be interpreted as HTML in sidebar labels.
+ * @param {string} str - Label text; falsy values produce an empty string.
+ * @returns {string} Text suitable for insertion into HTML.
+ */
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/[&<>"']/g, match => ({
@@ -217,6 +244,11 @@ function escapeHtml(str) {
   }[match]));
 }
 
+/**
+ * Read and trim a window name from session storage.
+ * @param {number} windowId - Browser window whose name is requested.
+ * @returns {Promise<string|null>} The name, or null if missing, invalid, or unreadable.
+ */
 async function getWindowCustomName(windowId) {
   try {
     const name = await browser.sessions.getWindowValue(windowId, 'windowName');
@@ -226,6 +258,11 @@ async function getWindowCustomName(windowId) {
   }
 }
 
+/**
+ * Recount normal windows and refresh badges and TST sidebars using the saved scopes.
+ * @param {number} [closingTabId] - Tab to exclude while Firefox finishes closing it.
+ * @returns {Promise<void>} Resolves after updates; failures are caught and logged.
+ */
 const updateTabCount = async (closingTabId) => {
   try {
     // Get all normal browser windows
@@ -321,6 +358,11 @@ const updateTabCount = async (closingTabId) => {
       }
     } else {
       // Helper function to generate all-windows sidebar content, marking targetWindowId with '*'
+      /**
+       * Build sidebar HTML for all windows using the current counts and layout.
+       * @param {number|null} [targetWindowId=null] - Window to mark with *, or null for no marker.
+       * @returns {string} Sidebar markup, or an empty string for an unknown layout.
+       */
       const generateAllWindowsContents = (targetWindowId = null) => {
         let windowIndex = 1;
 
@@ -514,6 +556,7 @@ browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 // Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
+/** Restore the layout, refresh counts, and attempt TST registration 15 times at one-second intervals. */
 async function initializeAddon() {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

@@ -3,6 +3,11 @@ const MOON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15"
 
 let currentPageTheme = "light";
 
+/**
+ * Replace an element's children with parsed SVG, clearing it if parsing fails.
+ * @param {Element} element - Container for the icon.
+ * @param {string} svgString - SVG markup; a missing namespace is supplied.
+ */
 function setSvgContent(element, svgString) {
     try {
         let content = svgString;
@@ -22,6 +27,11 @@ function setSvgContent(element, svgString) {
     }
 }
 
+/**
+ * Apply the popup theme and update its toggle icon and accessible label.
+ * @param {string} theme - "dark" selects dark mode; other values select light mode.
+ * @param {boolean} [save=false] - Whether to persist the theme in local storage.
+ */
 function applyPageTheme(theme, save = false) {
     currentPageTheme = theme === "dark" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", currentPageTheme);
@@ -60,6 +70,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         { label: '1000+' }
     ];
 
+    /**
+     * Render the four tab-count stages for a supported badge rendering mode.
+     * @param {string} selectedOption - Key in the badge preview image map.
+     */
     function updateBadgePreview(selectedOption) {
         const previewContainer = document.querySelector('#badge-preview');
         if (!previewContainer) return;
@@ -99,6 +113,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         previewContainer.appendChild(stageContainer);
     }
 
+    /**
+     * Render sample sidebar counts for the selected layout and window scope.
+     * @param {string|null} [layout] - Layout override; otherwise use the checked radio or default.
+     * @param {string|null} [scope] - Scope override; otherwise use the checked radio or default.
+     */
     function updateSidebarPreview(layout, scope) {
         const previewContainer = document.querySelector('#sidebar-preview');
         if (!previewContainer) return;
@@ -181,6 +200,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    /** Synchronize option-card highlights with their radio buttons' checked states. */
     function updateOptionCardSelection() {
         document.querySelectorAll('.option-card').forEach(card => {
             const radio = card.querySelector('input[type="radio"]');
@@ -237,6 +257,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     let messageTimeout = null;
+    /**
+     * Display a status message and clear its text after 2.5 seconds, replacing any pending timeout.
+     * @param {string} text - Message to show in the popup.
+     */
     function showStatusMessage(text) {
         const messageDiv = document.getElementById('message');
         if (!messageDiv) return;
@@ -248,6 +272,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 2500);
     }
 
+    /**
+     * Populate the window-name editor with normal windows, tab counts, and saved names.
+     * Attach debounced input saves and immediate change saves to each name field.
+     * @returns {Promise<void>} Resolves after rendering; loading failures appear in the list.
+     */
     async function loadWindowList() {
         const windowListContainer = document.getElementById('window-list');
         if (!windowListContainer) return;
@@ -338,6 +367,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 let debounceTimer = null;
 
+                /** Save this row's trimmed name, then show confirmation and request a sidebar refresh. */
                 const saveWindowName = async () => {
                     const newName = input.value.trim();
                     try {
