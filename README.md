@@ -36,7 +36,7 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 ### 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
 ![3Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/901d2e6d-8a16-48d1-b3be-6ba595111b9a)
 
-## Layout Comparison (v1.1.0+)
+## Layout Comparison (v0.9.9+)
 ### 1 line per window
 ![image](https://github.com/user-attachments/assets/4f256b5c-5c2c-42ac-ac69-5c75a31a6870)
 ### Compact mode
@@ -45,20 +45,36 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 ## Version History
 
 <details open>
-<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Compact View, Scope Controls, Tabbed UI & TST 4.4.1+ Compatibility</b></summary>
+<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Scope Controls, Tabbed Settings UI & Test Suite</b></summary>
 
 - **Custom Window Naming**: Assign custom, persistent names to Firefox windows with inline popup editing; custom window names update in real time across the TST sidebar display and persist across browser restarts.
 - **Tabbed Settings Popup UI**: Completely redesigned extension popup into an intuitive 3-tab layout (*Window Names*, *Sidebar Display*, and *Badge Counter*) with smooth transitions and compact styling.
-- **Sidebar Display Layouts**: Added support for choosing between "1 Line Per Window" (monospace table) and "Compact View" (inline continuous narrow format with auto-adjusting button height and dynamic window resizing).
 - **Sidebar Display Scope**: Configure whether the TST sidebar counter displays tab counts across all open windows or strictly for the current window.
 - **Current Window Indicator**: In multi-window "All Windows" mode, prepends an asterisk (`*`) to the current window's row in each sidebar to visually distinguish the active window.
 - **Toolbar Badge Scope**: Choose whether the extension toolbar badge displays the total count across all windows or the count for the current window only.
 - **Layout Preview**: Added a live text preview in the popup demonstrating the selected sidebar display format and scope.
 - **Theme & Header Controls**: Added dark/light theme switching with saved preference, direct "Open in separate tab" shortcut button, and header actions matching TST Lock design.
-- **Badge Synchronization & Standalone Mode**: Fixed badge count synchronization on browser startup, tab closures/removals, and standalone operation when Tree Style Tab is disabled or inactive.
-- **TST 4.4.1+ Compatibility & Spacing**: Updated button layout and vertical alignment for Tree Style Tab 4.4.1+ (including caret selector button alignment and exact sidebar spacing matching TST standards).
-- **Manifest & Security**: Added `sessions` and `tabs` permissions for window naming and synchronization, and declared Firefox `data_collection_permissions` for AMO compliance.
-- **Build & Lint Tooling**: Integrated `web-ext` build and lint pipeline (`npm run build`, `npm run lint`) matching TST Lock standards, updated Firefox ESR min-version baseline, resolved all DOM parser lint warnings, and modernized GitHub Actions CI/CD.
+- **Badge Synchronization & Standalone Mode**: Fixed badge count synchronization on browser startup, debounced tab closures/removals, and ensured reliable standalone operation when Tree Style Tab is disabled or inactive.
+- **Unit Test Suite**: Added a comprehensive Jest test suite (123+ unit tests) covering background logic, popup interactions, and badge calculations with CI integration.
+- **Manifest Permissions**: Added `sessions` and `tabs` permissions for window naming and synchronization.
+- **Build & Lint Tooling**: Integrated `web-ext` build and lint pipeline (`npm run build`, `npm run lint`) matching TST Lock standards, updated Firefox ESR min-version baseline (115.0), resolved all DOM parser lint warnings, and modernized GitHub Actions CI/CD.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.10 (August 26, 2026) - TST 4.4.1+ Compatibility & AMO Compliance</b></summary>
+
+- **TST 4.4.1+ Compatibility & Spacing**: Updated button layout and vertical alignment for Tree Style Tab 4.4.1+, including caret action selector button alignment and exact sidebar spacing matching TST standards.
+- **Manifest & AMO Compliance**: Declared Firefox `data_collection_permissions` in manifest.json for AMO compliance.
+
+</details>
+
+<details>
+<summary><b>Version 0.9.9 (July 27, 2024) - Compact View Layout & Popup Styling</b></summary>
+
+- **Compact View Layout**: Added a space-saving compact display option inside the Tree Style Tab sidebar featuring a narrow font, self-adjusting button height, non-wrapping window text, and dynamic adjustment on sidebar resize.
+- **Display Style Option**: Added popup selection allowing users to choose between the classic "1 Line Per Window" monospace table and the new "Compact View" layout.
+- **Popup Stylesheet**: Introduced `popup.css` for popup interface styling and asset packaging.
 
 </details>
 
