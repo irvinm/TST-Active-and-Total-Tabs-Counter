@@ -3,6 +3,15 @@ const MOON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" st
 
 let currentPageTheme = "light";
 
+function setSvgContent(element, svgString) {
+    try {
+        const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+        element.replaceChildren(doc.documentElement);
+    } catch (_) {
+        element.textContent = '';
+    }
+}
+
 function applyPageTheme(theme, save = false) {
     currentPageTheme = theme === "dark" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", currentPageTheme);
@@ -11,11 +20,11 @@ function applyPageTheme(theme, save = false) {
     const pageThemeIcon = document.getElementById("page-theme-icon");
     if (pageThemeBtn && pageThemeIcon) {
         if (currentPageTheme === "dark") {
-            pageThemeIcon.innerHTML = SUN_SVG;
+            setSvgContent(pageThemeIcon, SUN_SVG);
             pageThemeBtn.title = "Switch to light theme";
             pageThemeBtn.setAttribute("aria-label", "Switch to light theme");
         } else {
-            pageThemeIcon.innerHTML = MOON_SVG;
+            setSvgContent(pageThemeIcon, MOON_SVG);
             pageThemeBtn.title = "Switch to dark theme";
             pageThemeBtn.setAttribute("aria-label", "Switch to dark theme");
         }
@@ -48,22 +57,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         const images = options[selectedOption];
         if (!images) return;
 
-        let html = '<div class="badge-stage-container">';
+        previewContainer.replaceChildren();
+        const stageContainer = document.createElement('div');
+        stageContainer.className = 'badge-stage-container';
+
         images.forEach((src, index) => {
             const stageLabel = badgeStages[index] ? badgeStages[index].label : '';
-            html += `
-                <div class="badge-stage">
-                    <img src="${src}" alt="${stageLabel} tabs">
-                    <span class="badge-caption">${stageLabel}</span>
-                </div>
-            `;
+            const stage = document.createElement('div');
+            stage.className = 'badge-stage';
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = `${stageLabel} tabs`;
+
+            const caption = document.createElement('span');
+            caption.className = 'badge-caption';
+            caption.textContent = stageLabel;
+
+            stage.appendChild(img);
+            stage.appendChild(caption);
+            stageContainer.appendChild(stage);
+
             if (index < images.length - 1) {
-                html += '<span class="badge-arrow">&rarr;</span>';
+                const arrow = document.createElement('span');
+                arrow.className = 'badge-arrow';
+                arrow.textContent = '→';
+                stageContainer.appendChild(arrow);
             }
         });
-        html += '</div>';
 
-        previewContainer.innerHTML = html;
+        previewContainer.appendChild(stageContainer);
     }
 
     function updateSidebarPreview(layout, scope) {

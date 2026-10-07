@@ -58,6 +58,7 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 - **Badge Synchronization & Standalone Mode**: Fixed badge count synchronization on browser startup, tab closures/removals, and standalone operation when Tree Style Tab is disabled or inactive.
 - **TST 4.4.1+ Compatibility & Spacing**: Updated button layout and vertical alignment for Tree Style Tab 4.4.1+ (including caret selector button alignment and exact sidebar spacing matching TST standards).
 - **Manifest & Security**: Added `sessions` and `tabs` permissions for window naming and synchronization, and declared Firefox `data_collection_permissions` for AMO compliance.
+- **Build & Lint Tooling**: Integrated `web-ext` build and lint pipeline (`npm run build`, `npm run lint`) matching TST Lock standards, updated Firefox ESR min-version baseline, resolved all DOM parser lint warnings, and modernized GitHub Actions CI/CD.
 
 </details>
 

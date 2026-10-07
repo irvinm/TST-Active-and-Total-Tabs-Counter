@@ -1,0 +1,39 @@
+{
+  "name": "tst-active-and-total-tabs-counter",
+  "version": "1.1.0",
+  "description": "Active and Total Tabs Counter for Tree Style Tab and toolbar badge.",
+  "main": "background.js",
+  "scripts": {
+    "build": "web-ext build --overwrite-dest",
+    "lint": "web-ext lint",
+    "start": "web-ext run"
+  },
+  "webExt": {
+    "ignoreFiles": [
+      "package.json",
+      "package-lock.json",
+      ".github",
+      ".vscode",
+      ".gemini",
+      ".agents",
+      ".specify",
+      "GEMINI.md",
+      "README.md",
+      "LICENSE"
+    ],
+    "build": {
+      "overwriteDest": true,
+      "filename": "TST-Active-and-Total-Tabs-Counter.xpi"
+    }
+  },
+  "devDependencies": {
+    "web-ext": "^10.6.0"
+  },
+  "overrides": {
+    "adm-zip": "^0.6.0",
+    "brace-expansion": "^5.0.8",
+    "fast-uri": "^3.1.4",
+    "js-yaml": "^4.3.0",
+    "shell-quote": "^1.8.5"
+  }
+}
