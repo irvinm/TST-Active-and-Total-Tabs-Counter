@@ -18,6 +18,8 @@ jobs:
       run: npm ci
     - name: Lint extension
       run: npm run lint
+    - name: Run unit tests
+      run: npm test
     - name: Build extension
       run: npm run build
     - uses: actions/upload-artifact@v4

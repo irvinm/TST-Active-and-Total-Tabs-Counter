@@ -91,7 +91,10 @@ const registerToTST = async () => {
 
 async function getDisplayOption() {
   const { displayOption } = await browser.storage.local.get('displayOption');
-  return displayOption || 'nativeBadge'; // Default to 'nativeBadge' if not set
+  // 'nativeBadge' is a legacy value with no option in the popup; it is the same as
+  // 'switchToSVG' below 1000 tabs, so treat it (and an unset value) as 'switchToSVG'.
+  if (!displayOption || displayOption === 'nativeBadge') return 'switchToSVG';
+  return displayOption;
 }
 
 async function getBadgeScopeOption() {
@@ -181,17 +184,6 @@ async function updateBadgeDisplay(tabCount, targetWindowId = null) {
   const targetId = targetWindowId !== null ? targetWindowId : undefined;
 
   switch (displayOption) {
-      case 'nativeBadge':
-          if (countNum < 1000) {
-            await browser.browserAction.setIcon({ path: "images/icon.png", windowId: targetId });
-            await browser.browserAction.setBadgeText({ text: tabCount.toString(), windowId: targetId });
-            break;
-          }
-          else {
-            await browser.browserAction.setIcon({ path: "images/icon.png", windowId: targetId });
-            await browser.browserAction.setBadgeText({ text: "999", windowId: targetId });
-            break;
-          }
       case 'switchToSVG':
           // Logic to switch between badge and SVG @ 1000 tabs
           if (countNum < 1000) {
@@ -384,6 +376,16 @@ const updateTabCount = async (closingTabId) => {
         }
         else if (tabCountMethod === 2) {
           let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
+
+          // With a single window, show just one entry (like the one-line layout) rather than
+          // repeating the same counts as both the window and the total.
+          if (windowData.length === 1) {
+            const win = windowData[0];
+            const label = win.customName ? escapeHtml(win.customName) : 'T';
+            windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${win.loaded}/${win.total}</span>`;
+            windowContentsHtml += '</div>';
+            return windowContentsHtml;
+          }
 
           for (const win of windowData) {
             const isCurrent = (win.id === targetWindowId);

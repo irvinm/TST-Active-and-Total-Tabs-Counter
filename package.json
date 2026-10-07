@@ -6,12 +6,14 @@
   "scripts": {
     "build": "web-ext build --overwrite-dest",
     "lint": "web-ext lint",
-    "start": "web-ext run"
+    "start": "web-ext run",
+    "test": "jest"
   },
   "webExt": {
     "ignoreFiles": [
       "package.json",
       "package-lock.json",
+      "tests",
       ".github",
       ".vscode",
       ".gemini",
@@ -27,6 +29,8 @@
     }
   },
   "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
     "web-ext": "^10.6.0"
   },
   "overrides": {
