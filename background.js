@@ -494,10 +494,18 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 
 // Listen for tab events
 browser.tabs.onCreated.addListener(() => updateTabCount());
+
+let removeTimeout = null;
 browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
   updateTabCount(tabId);
-  // Also recount after a short delay in case Firefox finalizes tab closure asynchronously
-  setTimeout(() => updateTabCount(), 100);
+  // Coalesce the delayed follow-up recount across multiple tab closures
+  if (removeTimeout !== null) {
+    clearTimeout(removeTimeout);
+  }
+  removeTimeout = setTimeout(() => {
+    removeTimeout = null;
+    updateTabCount();
+  }, 100);
 });
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if ('discarded' in changeInfo) {

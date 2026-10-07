@@ -628,6 +628,25 @@ describe("TST Active and Total Tabs Counter - Background Script", () => {
       expect(mockTabsQuery).toHaveBeenCalled();
     });
 
+    it("coalesces follow-up recounts when multiple tabs are removed rapidly", async () => {
+      setupWindows([{ id: 1, tabs: tabs(5) }]);
+      await loadBackground();
+      mockTabsQuery.mockClear();
+
+      // Remove three tabs in rapid succession
+      tabRemovedCallback(1000, { windowId: 1 });
+      tabRemovedCallback(1001, { windowId: 1 });
+      tabRemovedCallback(1002, { windowId: 1 });
+      await flushPromises();
+
+      mockTabsQuery.mockClear();
+      // Advance to the coalesced 100ms follow-up timer
+      await jest.advanceTimersByTimeAsync(100);
+
+      // Should execute exactly one follow-up query for window 1, not three
+      expect(mockTabsQuery).toHaveBeenCalledTimes(1);
+    });
+
     it("recounts when a tab is discarded or restored", async () => {
       await loadBackground();
       mockTabsQuery.mockClear();
