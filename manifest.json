@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "TST Active and Total Tabs Counter",
-  "version": "0.9.10",
+  "version": "1.1.0",
   "description": "Tracks and displays in TST the number of active and total tabs",
   "homepage_url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter",
   "icons": {
@@ -13,12 +13,14 @@
     ]
   },
   "permissions": [
-    "storage"
+    "storage",
+    "sessions",
+    "tabs"
   ],
   "browser_specific_settings": {
     "gecko": {
       "id": "TST-Active-and-Total-Tabs-Counter@irvinm.addons.mozilla.org",
-      "strict_min_version": "79.0",
+      "strict_min_version": "115.0",
       "data_collection_permissions": {
         "required": [
           "none"

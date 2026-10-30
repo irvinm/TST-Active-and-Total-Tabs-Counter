@@ -14,7 +14,7 @@ getDisplayStyleOption();
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
-// Register the addon with TST
+/** Register sidebar styles and events with TST, restore the layout, and request a recount. */
 const registerToTST = async () => {
   try {
     // Base CSS to include with updates
@@ -74,8 +74,7 @@ const registerToTST = async () => {
     });
 
   } catch (e) {
-    console.error('Failed to communicate with TST', e);
-    await sleep(250).then(registerToTST);
+    console.log('TST not ready or not installed:', e.message || e);
   }
   
   let result2 = await browser.storage.local.get(['displayStyleOption']);
@@ -90,13 +89,42 @@ const registerToTST = async () => {
   updateTabCount();
 };
 
+/**
+ * Read the badge rendering preference, mapping unset and legacy values to switchToSVG.
+ * @returns {Promise<string>} The selected rendering mode.
+ */
 async function getDisplayOption() {
   const { displayOption } = await browser.storage.local.get('displayOption');
-  return displayOption || 'nativeBadge'; // Default to 'nativeBadge' if not set
+  // 'nativeBadge' is a legacy value with no option in the popup; it is the same as
+  // 'switchToSVG' below 1000 tabs, so treat it (and an unset value) as 'switchToSVG'.
+  if (!displayOption || displayOption === 'nativeBadge') return 'switchToSVG';
+  return displayOption;
 }
 
-// Function to render the badge using SVG
-function svgRenderBadge(tabCount) {
+/**
+ * Read the badge scope, defaulting to all windows.
+ * @returns {Promise<string>} The stored scope or "all".
+ */
+async function getBadgeScopeOption() {
+  const { badgeScopeOption } = await browser.storage.local.get('badgeScopeOption');
+  return badgeScopeOption || 'all';
+}
+
+/**
+ * Read the sidebar scope, defaulting to all windows.
+ * @returns {Promise<string>} The stored scope or "all".
+ */
+async function getSidebarScopeOption() {
+  const { sidebarScopeOption } = await browser.storage.local.get('sidebarScopeOption');
+  return sidebarScopeOption || 'all';
+}
+
+/**
+ * Set the toolbar icon to an SVG containing the tab count.
+ * @param {number|string} tabCount - Total tabs to display.
+ * @param {number|null} [targetWindowId=null] - Window to update, or null for the global icon.
+ */
+function svgRenderBadge(tabCount, targetWindowId = null) {
   const svgIconBase = `
     <svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 0 C6.875 0.875 6.875 0.875 8 2 C8.07313567 4.53049402 8.09247527 7.03304837 8.0625 9.5625 C8.05798828 10.27341797 8.05347656 10.98433594 8.04882812 11.71679688 C8.03700864 13.47790013 8.01907263 15.23896036 8 17 C10.64 17 13.28 17 16 17 C16.12375 15.865625 16.2475 14.73125 16.375 13.5625 C16.684375 11.7990625 16.684375 11.7990625 17 10 C20.0832635 8.45836825 22.60878099 8.70252465 26 9 C27.9375 10.75 27.9375 10.75 29 13 C29 14.32 29 15.64 29 17 C31.97 17 34.94 17 38 17 C37.95875 16.05125 37.9175 15.1025 37.875 14.125 C38 11 38 11 40 9 C45.18358531 8.42404608 45.18358531 8.42404608 48 9 C50.45321644 11.83653151 51 13.25123496 51 17 C66.51 17 82.02 17 98 17 C98 12.38 98 7.76 98 3 C98.99 2.01 99.98 1.02 101 0 C104.625 0.1875 104.625 0.1875 108 1 C109.69167828 4.38335656 109.12870768 8.2268801 109.11352539 11.94775391 C109.11367142 12.87463516 109.11381744 13.80151642 109.1139679 14.75648499 C109.11326946 17.8298677 109.10548027 20.90319033 109.09765625 23.9765625 C109.09579182 26.10362719 109.09436804 28.2306923 109.09336853 30.35775757 C109.08954528 35.96375712 109.07971662 41.56973088 109.06866455 47.17572021 C109.0584463 52.89318493 109.05387002 58.61065379 109.04882812 64.328125 C109.0380942 75.55209468 109.02102007 86.7760452 109 98 C109.78761719 98.1340625 110.57523437 98.268125 111.38671875 98.40625 C114 99 114 99 115.8125 100.5 C117.57140928 104.20296689 117.6000365 107.96339084 117 112 C115 114 115 114 112.82293701 114.24888897 C111.91295959 114.2483442 111.00298218 114.24779943 110.06542969 114.24723816 C109.02221558 114.25143265 107.97900146 114.25562714 106.9041748 114.25994873 C105.75501587 114.25432922 104.60585693 114.24870972 103.421875 114.24291992 C102.21535278 114.24481827 101.00883057 114.24671661 99.76574707 114.24867249 C96.45169486 114.25174855 93.13789069 114.24585668 89.8238678 114.23571944 C86.36011909 114.2269498 82.89637473 114.22869618 79.43261719 114.2290802 C73.61521146 114.22814304 67.79785783 114.2194522 61.98046875 114.20581055 C55.24921227 114.19008448 48.51801287 114.18481242 41.78673935 114.1855461 C35.31863358 114.18615596 28.85054646 114.18105439 22.38244629 114.17275429 C19.62650405 114.16921861 16.87056842 114.16739063 14.11462402 114.16686058 C10.26910373 114.16567173 6.42363115 114.15596846 2.578125 114.14526367 C0.8543866 114.14594345 0.8543866 114.14594345 -0.9041748 114.14663696 C-1.94738892 114.14237198 -2.99060303 114.13810699 -4.06542969 114.13371277 C-4.9754071 114.13203692 -5.88538452 114.13036108 -6.82293701 114.12863445 C-9 114 -9 114 -11 113 C-11.78150669 104.05609012 -11.78150669 104.05609012 -8.6875 99.875 C-6 98 -6 98 -3 98 C-3.00666183 96.83124329 -3.01332367 95.66248657 -3.02018738 94.45831299 C-3.08096307 83.45191202 -3.12595565 72.44554504 -3.15543652 61.43901443 C-3.17110236 55.78023544 -3.19235759 50.12159175 -3.22631836 44.46289062 C-3.25887876 39.00345273 -3.27684609 33.5441451 -3.28463173 28.08461761 C-3.29018119 26.00016987 -3.30101773 23.91572937 -3.31719017 21.83133698 C-3.33892014 18.91506967 -3.34196876 15.99934286 -3.34057617 13.08300781 C-3.35675491 11.78612534 -3.35675491 11.78612534 -3.3732605 10.46304321 C-3.34279011 4.578575 -3.34279011 4.578575 -1.47871399 1.43231201 C-0.99073837 0.95964905 -0.50276276 0.48698608 0 0 Z M8 21 C8 28.92 8 36.84 8 45 C22.85 45 37.7 45 53 45 C53.66 42.69 54.32 40.38 55 38 C57.64 38 60.28 38 63 38 C63.66 40.31 64.32 42.62 65 45 C67.97 45 70.94 45 74 45 C74.99 42.69 75.98 40.38 77 38 C79.97 38 82.94 38 86 38 C86.495 41.465 86.495 41.465 87 45 C90.63 45 94.26 45 98 45 C98 37.08 98 29.16 98 21 C82.49 21 66.98 21 51 21 C50.01 23.31 49.02 25.62 48 28 C45.03 28 42.06 28 39 28 C38.67 25.69 38.34 23.38 38 21 C35.03 21 32.06 21 29 21 C28.01 23.31 27.02 25.62 26 28 C22.625 28.125 22.625 28.125 19 28 C16.64046906 25.64046906 16.50858587 24.22104383 16 21 C13.36 21 10.72 21 8 21 Z M8 49 C8 56.92 8 64.84 8 73 C10.64 73 13.28 73 16 73 C16.33 70.69 16.66 68.38 17 66 C19.97 66 22.94 66 26 66 C26.99 68.31 27.98 70.62 29 73 C31.97 73 34.94 73 38 73 C38.33 70.69 38.66 68.38 39 66 C41.97 66 44.94 66 48 66 C48.99 68.31 49.98 70.62 51 73 C66.51 73 82.02 73 98 73 C98 65.08 98 57.16 98 49 C94.37 49 90.74 49 87 49 C86.67 51.31 86.34 53.62 86 56 C83.03 56 80.06 56 77 56 C76.01 53.69 75.02 51.38 74 49 C71.03 49 68.06 49 65 49 C64.34 51.31 63.68 53.62 63 56 C60.36 56 57.72 56 55 56 C54.34 53.69 53.68 51.38 53 49 C38.15 49 23.3 49 8 49 Z M8 77 C8 83.93 8 90.86 8 98 C37.7 98 67.4 98 98 98 C98 91.07 98 84.14 98 77 C82.49 77 66.98 77 51 77 C50.01 79.31 49.02 81.62 48 84 C45.36 84 42.72 84 40 84 C39.34 81.69 38.68 79.38 38 77 C35.03 77 32.06 77 29 77 C28.01 79.31 27.02 81.62 26 84 C23.03 84 20.06 84 17 84 C16.67 81.69 16.34 79.38 16 77 C13.36 77 10.72 77 8 77 Z " fill="#D98559" transform="translate(11,7)"/>
@@ -158,138 +186,290 @@ function svgRenderBadge(tabCount) {
   } else { // 1000+ tabs
     svgIcon = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgIconBase + svgIconNumber4Digit)}`;
   }
-  browser.browserAction.setIcon({path: svgIcon});
+
+  const iconDetails = { path: svgIcon };
+  if (targetWindowId !== null) {
+    iconDetails.windowId = targetWindowId;
+  }
+  browser.browserAction.setIcon(iconDetails);
 }
 
-async function updateBadgeDisplay(tabCount) {
+/**
+ * Apply the saved rendering mode to the toolbar icon and badge text.
+ * @param {number|string} tabCount - Total tabs to display.
+ * @param {number|null} [targetWindowId=null] - Window to update, or null for global defaults.
+ * @returns {Promise<void>} Resolves after the awaited toolbar updates finish.
+ */
+async function updateBadgeDisplay(tabCount, targetWindowId = null) {
   const displayOption = await getDisplayOption();
+  const countNum = parseInt(tabCount, 10) || 0;
+  const targetId = targetWindowId !== null ? targetWindowId : undefined;
+
   switch (displayOption) {
-      case 'nativeBadge':
-          if (tabCount < 1000) {
-            browser.browserAction.setIcon({path: "images/icon.png"});
-            browser.browserAction.setBadgeText({ text: tabCount });
-            break;
-          }
-          else {
-            browser.browserAction.setIcon({path: "images/icon.png"});
-            browser.browserAction.setBadgeText({ text: "999" });
-            break;
-          }
       case 'switchToSVG':
           // Logic to switch between badge and SVG @ 1000 tabs
-          if (tabCount < 1000) {
-            browser.browserAction.setIcon({path: "images/icon.png"});
-            browser.browserAction.setBadgeText({ text: tabCount });
+          if (countNum < 1000) {
+            await browser.browserAction.setIcon({ path: "images/icon.png", windowId: targetId });
+            await browser.browserAction.setBadgeText({ text: tabCount.toString(), windowId: targetId });
             break;
           }
           else {
-            svgRenderBadge(tabCount);
-            browser.browserAction.setBadgeText({ text: '' });
+            svgRenderBadge(tabCount, targetWindowId);
+            await browser.browserAction.setBadgeText({ text: '', windowId: targetId });
             break;
           }
       case 'alwaysSVG':
           // Logic for always using SVG
-          svgRenderBadge(tabCount);
-          browser.browserAction.setBadgeText({ text: '' });
+          svgRenderBadge(tabCount, targetWindowId);
+          await browser.browserAction.setBadgeText({ text: '', windowId: targetId });
           break;
       default:
           console.error('Unknown display option:', displayOption);
   }
 }
 
-const updateTabCount = async () => {
+/**
+ * Escape characters that could be interpreted as HTML in sidebar labels.
+ * @param {string} str - Label text; falsy values produce an empty string.
+ * @returns {string} Text suitable for insertion into HTML.
+ */
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, match => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[match]));
+}
+
+/**
+ * Read and trim a window name from session storage.
+ * @param {number} windowId - Browser window whose name is requested.
+ * @returns {Promise<string|null>} The name, or null if missing, invalid, or unreadable.
+ */
+async function getWindowCustomName(windowId) {
   try {
-    // Get all tabs globally
-    const allTabs = await browser.tabs.query({});
-    const loadedTabsGlobal = allTabs.filter(tab => !tab.discarded).length;
-    const totalTabsGlobal = allTabs.length;
-    const tabCount = totalTabsGlobal.toString();
+    const name = await browser.sessions.getWindowValue(windowId, 'windowName');
+    return (typeof name === 'string' && name.trim().length > 0) ? name.trim() : null;
+  } catch (e) {
+    return null;
+  }
+}
 
-    updateBadgeDisplay(tabCount);
-
-    // Get all windows
-    const windows = await browser.windows.getAll();
+/**
+ * Recount normal windows and refresh badges and TST sidebars using the saved scopes.
+ * @param {number} [closingTabId] - Tab to exclude while Firefox finishes closing it.
+ * @returns {Promise<void>} Resolves after updates; failures are caught and logged.
+ */
+const updateTabCount = async (closingTabId) => {
+  try {
+    // Get all normal browser windows
+    const windows = await browser.windows.getAll({ windowTypes: ['normal'] });
     let contents = '';
 
-    let windowIndex = 1;
+    // Collect per-window and global tab counts from normal windows
+    let loadedTabsGlobal = 0;
+    let totalTabsGlobal = 0;
+    const windowData = [];
 
-    if (tabCountMethod === 1) {
-      // Iterate through each window to get tabs info
-      for (const window of windows) {
-        const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-        const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-        const totalTabsThisWindow = tabsThisWindow.length;
-
-        // Generate HTML content for this window if more than one window is open
-        if (windows.length > 1) {
-          contents += `<div style="display: flex; justify-content: center;">
-                          <div style="font-family: monospace; display: table;">
-                              <div style="display: table-row;">
-                                  <span style="display: table-cell; text-align: right; width: 40px;">Win${windowIndex}:</span>
-                                  <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;" id="loadedTabsThisWindow-${window.id}">${loadedTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 2px;">/</span>
-                                  <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;" id="totalTabsThisWindow-${window.id}">${totalTabsThisWindow}</span>
-                                  <span style="display: table-cell; padding-left: 3px;">tabs</span>
-                              </div>
-                          </div>
-                      </div>`;
-
-          windowIndex++; // Increment the counter at the end of each iteration
-        }
+    for (const window of windows) {
+      let tabsThisWindow = await browser.tabs.query({ windowId: window.id });
+      if (typeof closingTabId === 'number') {
+        tabsThisWindow = tabsThisWindow.filter(tab => tab.id !== closingTabId);
       }
+      const loaded = tabsThisWindow.filter(tab => !tab.discarded).length;
+      const total = tabsThisWindow.length;
+      const customName = await getWindowCustomName(window.id);
 
-      // Add global tabs info
-      contents += `<div style="display: flex; justify-content: center;">
-                      <div style="font-family: monospace; display: table;">
-                          <div style="display: table-row;">
-                              <span style="display: table-cell; text-align: right; width: 40px;">Total:</span>
-                              <span style="display: table-cell; text-align: right; padding-left: 3px; width: 30px;">${loadedTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 2px;">/</span>
-                              <span style="display: table-cell; text-align: left; padding-left: 2px; width: 30px;">${totalTabsGlobal}</span>
-                              <span style="display: table-cell; padding-left: 3px;">tabs</span>
-                          </div>
-                      </div>
-                  </div>`;
-      
-      // After all content pieces have been put together, add padding with extra padding to the right
-      contents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">${contents}</div>`;            
+      loadedTabsGlobal += loaded;
+      totalTabsGlobal += total;
+
+      windowData.push({
+        id: window.id,
+        loaded,
+        total,
+        customName
+      });
     }
-    else if (tabCountMethod === 2) {
-        // Initialize an HTML string to collect entries
-        let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
 
-        let totalActiveTabs = 0;
-        let grandTotalTabs = 0;
+    const badgeScope = await getBadgeScopeOption();
+    if (badgeScope === 'current') {
+      for (const win of windowData) {
+        await updateBadgeDisplay(win.total.toString(), win.id);
+      }
+    } else {
+      for (const win of windowData) {
+        try {
+          await browser.browserAction.setBadgeText({ text: null, windowId: win.id });
+          await browser.browserAction.setIcon({ path: null, windowId: win.id });
+        } catch (_) {}
+      }
+      await updateBadgeDisplay(totalTabsGlobal.toString(), null);
+    }
 
-        for (const window of windows) {
-            const tabsThisWindow = await browser.tabs.query({ windowId: window.id });
-            const loadedTabsThisWindow = tabsThisWindow.filter(tab => !tab.discarded).length;
-            const totalTabsThisWindow = tabsThisWindow.length;
+    const sidebarScope = await getSidebarScopeOption();
 
-            // Update the total counts
-            totalActiveTabs += loadedTabsThisWindow;
-            grandTotalTabs += totalTabsThisWindow;
+    if (sidebarScope === 'current') {
+      let windowIndex = 1;
+      // Send scoped extra contents to each window individually
+      for (const win of windowData) {
+        let defaultLabel = `Win${windowIndex}`;
+        let defaultCompactLabel = `W${windowIndex}`;
+        if (windowData.length === 1) {
+          defaultLabel = 'Total';
+          defaultCompactLabel = 'T';
+        }
+        const label = win.customName ? `${escapeHtml(win.customName)}:` : `${defaultLabel}:`;
+        const compactLabel = win.customName ? `${escapeHtml(win.customName)}` : defaultCompactLabel;
 
-            // Append the string for this window into the HTML string
-            windowContentsHtml += `<span style="white-space: nowrap;">W${windowIndex}: ${loadedTabsThisWindow}/${totalTabsThisWindow}</span>, `;
-            windowIndex++; // Increment the counter at the end of each iteration
+        let winContents = '';
+        if (tabCountMethod === 1) {
+          winContents = `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">
+                          <div style="display: flex; justify-content: center;">
+                            <div style="font-family: monospace; display: table;">
+                              <div style="display: table-row;">
+                                <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
+                                <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${win.loaded}</span>
+                                <span style="display: table-cell; padding-left: 2px;">/</span>
+                                <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${win.total}</span>
+                                <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>`;
+        } else if (tabCountMethod === 2) {
+          winContents = `<div style="text-align: left; font-family: 'Arial Narrow', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">
+                          <span style="white-space: nowrap;">${compactLabel}: ${win.loaded}/${win.total}</span>
+                        </div>`;
         }
 
-        // Append the total active/total tabs across all windows
-        windowContentsHtml += `<span style="white-space: nowrap;">T: ${totalActiveTabs}/${grandTotalTabs}</span>`;
+        try {
+          await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+            type: 'set-extra-contents',
+            place: 'new-tab-button',
+            contents: winContents,
+            windowId: win.id
+          });
+        } catch (tstErr) {}
 
-        windowContentsHtml += '</div>'; // Close the adjusted div
+        windowIndex++;
+      }
+    } else {
+      // Helper function to generate all-windows sidebar content, marking targetWindowId with '*'
+      /**
+       * Build sidebar HTML for all windows using the current counts and layout.
+       * @param {number|null} [targetWindowId=null] - Window to mark with *, or null for no marker.
+       * @returns {string} Sidebar markup, or an empty string for an unknown layout.
+       */
+      const generateAllWindowsContents = (targetWindowId = null) => {
+        let windowIndex = 1;
 
-        // Assign the HTML string to contents
-        contents = windowContentsHtml;
+        if (tabCountMethod === 1) {
+          let tableRows = '';
+
+          if (windowData.length === 1) {
+            const win = windowData[0];
+            const label = win.customName ? `${escapeHtml(win.customName)}:` : 'Total:';
+
+            tableRows += `<div style="display: table-row;">
+                            <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
+                            <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${win.loaded}</span>
+                            <span style="display: table-cell; padding-left: 2px;">/</span>
+                            <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${win.total}</span>
+                            <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                          </div>`;
+          } else {
+            for (const win of windowData) {
+              const isCurrent = (win.id === targetWindowId);
+              const marker = isCurrent ? '*' : '';
+              const baseName = win.customName ? escapeHtml(win.customName) : `Win${windowIndex}`;
+              const label = `${marker}${baseName}:`;
+
+              tableRows += `<div style="display: table-row;">
+                              <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">${label}</span>
+                              <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;" id="loadedTabsThisWindow-${win.id}">${win.loaded}</span>
+                              <span style="display: table-cell; padding-left: 2px;">/</span>
+                              <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;" id="totalTabsThisWindow-${win.id}">${win.total}</span>
+                              <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                            </div>`;
+
+              windowIndex++;
+            }
+
+            // Add global tabs info
+            tableRows += `<div style="display: table-row;">
+                            <span style="display: table-cell; text-align: right; white-space: nowrap; padding-right: 6px;">Total:</span>
+                            <span style="display: table-cell; text-align: right; padding-left: 3px; min-width: 30px;">${loadedTabsGlobal}</span>
+                            <span style="display: table-cell; padding-left: 2px;">/</span>
+                            <span style="display: table-cell; text-align: left; padding-left: 2px; min-width: 30px;">${totalTabsGlobal}</span>
+                            <span style="display: table-cell; padding-left: 3px;">tabs</span>
+                          </div>`;
+          }
+
+          return `<div style="font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.50rem;">
+                    <div style="display: flex; justify-content: center;">
+                      <div style="font-family: monospace; display: table;">
+                        ${tableRows}
+                      </div>
+                    </div>
+                  </div>`;
+        }
+        else if (tabCountMethod === 2) {
+          let windowContentsHtml = '<div style="text-align: left; font-family: \'Arial Narrow\', sans-serif; font-size: smallest; padding-top: 0.5rem; padding-left: 0.5rem; padding-bottom: 0.5rem; padding-right: 1.25rem;">';
+
+          // With a single window, show just one entry (like the one-line layout) rather than
+          // repeating the same counts as both the window and the total.
+          if (windowData.length === 1) {
+            const win = windowData[0];
+            const label = win.customName ? escapeHtml(win.customName) : 'T';
+            windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${win.loaded}/${win.total}</span>`;
+            windowContentsHtml += '</div>';
+            return windowContentsHtml;
+          }
+
+          for (const win of windowData) {
+            const isCurrent = (win.id === targetWindowId);
+            const marker = isCurrent ? '*' : '';
+            const baseName = win.customName ? escapeHtml(win.customName) : `W${windowIndex}`;
+            const label = `${marker}${baseName}`;
+            windowContentsHtml += `<span style="white-space: nowrap;">${label}: ${win.loaded}/${win.total}</span>, `;
+            windowIndex++;
+          }
+
+          windowContentsHtml += `<span style="white-space: nowrap;">T: ${loadedTabsGlobal}/${totalTabsGlobal}</span>`;
+          windowContentsHtml += '</div>';
+
+          return windowContentsHtml;
+        }
+
+        return '';
+      };
+
+      try {
+        // Update fallback for new tab button
+        const defaultContents = generateAllWindowsContents(null);
+        await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+          type: 'set-extra-contents',
+          place: 'new-tab-button',
+          contents: defaultContents,
+        });
+
+        // Update each window's TST sidebar with '*' indicating that specific window
+        for (const win of windowData) {
+          const winContents = generateAllWindowsContents(win.id);
+          await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
+            type: 'set-extra-contents',
+            place: 'new-tab-button',
+            contents: winContents,
+            windowId: win.id
+          });
+        }
+      } catch (tstErr) {
+        // TST might not be running or installed; badge display is unaffected
+      }
     }
-
-    // Update the TST new tab button with the generated content
-    await browser.runtime.sendMessage('treestyletab@piro.sakura.ne.jp', {
-      type: 'set-extra-contents',
-      place: 'new-tab-button',
-      contents: contents,
-    });
 
   } catch (e) {
     console.error('Failed to update tab count', e);
@@ -313,27 +493,61 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 });
 
 // Listen for tab events
-browser.tabs.onCreated.addListener(updateTabCount);
-browser.tabs.onRemoved.addListener(updateTabCount);
+browser.tabs.onCreated.addListener(() => updateTabCount());
+
+let removeTimeout = null;
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  updateTabCount(tabId);
+  // Coalesce the delayed follow-up recount across multiple tab closures
+  if (removeTimeout !== null) {
+    clearTimeout(removeTimeout);
+  }
+  removeTimeout = setTimeout(() => {
+    removeTimeout = null;
+    updateTabCount();
+  }, 100);
+});
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if ('discarded' in changeInfo) {
     updateTabCount();
   }
 });
 
-// Listen for window events and update newtab button height as needed
-browser.windows.onCreated.addListener(registerToTST);
-browser.windows.onRemoved.addListener(registerToTST);
+// Listen for window events and update newtab button height and tab counts as needed
+browser.windows.onCreated.addListener(() => {
+  registerToTST();
+  updateTabCount();
+});
+browser.windows.onRemoved.addListener(() => {
+  registerToTST();
+  updateTabCount();
+});
+browser.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId !== browser.windows.WINDOW_ID_NONE) {
+    updateTabCount();
+  }
+});
 
 browser.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        if (request.action === "updateBadge") {
+        if (request.action === "updateBadge" || 
+            request.action === "updateWindowNames" ||
+            request.action === "updateSidebarScope" ||
+            request.action === "updateBadgeScope") {
             updateTabCount();
-            sendResponse({result: "Badge updated"});
+            sendResponse({result: "Updated"});
         }
         return true; // keep the messaging channel open for sendResponse
     }
 );
+
+// Listen for storage changes in case popup modifies preferences directly
+browser.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local') return;
+    if (changes.sidebarScopeOption || changes.badgeScopeOption || changes.displayStyleOption || changes.displayOption) {
+        updateTabCount();
+    }
+});
 
 // Listen for messages
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -347,13 +561,18 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Set badge text background to grey
 browser.browserAction.setBadgeBackgroundColor({ color: '#808080' });
 
-//Set badge text font color to white
+// Set badge text font color to white
 browser.browserAction.setBadgeTextColor({ color: '#ffffff' });
 
+/** Restore the layout, refresh counts, and attempt TST registration 15 times at one-second intervals. */
 async function initializeAddon() {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  // Update badge and tab count immediately on startup
+  await getDisplayStyleOption();
+  await updateTabCount();
 
   for (let i = 0; i < 15; i++) {
     console.log(new Date().toISOString() + ': Call to registerToTST #', i);

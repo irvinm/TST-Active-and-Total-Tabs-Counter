@@ -1,35 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tab Counter Options</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TST Active and Total Tabs Counter Settings</title>
     <link rel="stylesheet" href="popup.css">
 </head>
-<body>
-    <h2>Badge Counter Options (Total Tabs)</h2>
-    <div id="image-row"></div> <!-- Images will be dynamically inserted here -->
-    <form id="optionsForm">
-        <!-- Removed nativeBadge option -->
-        <div class="option-group" data-option="switchToSVG">
-            <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
-            <label for="switchToSVG">Use native badge counter for 1-999 tabs then SVG for 1000+ tabs</label><br>
+<body class="popup-view">
+    <div class="container">
+        <header class="header">
+            <div class="header-main">
+                <img src="images/icon.png" alt="TST Active and Total Tabs Counter Icon" class="header-icon">
+                <div>
+                    <h1>TST Active and Total Tabs Counter</h1>
+                    <p class="subtitle">Customize tab counter display for Tree Style Tab</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button type="button" id="page-theme-btn" class="icon-link-btn" title="Switch to dark theme" aria-label="Toggle page theme">
+                    <span id="page-theme-icon" class="theme-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                </button>
+                <button type="button" id="open-tab-btn" class="icon-link-btn" title="Open in separate tab" aria-label="Open in separate tab">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.5 2.5A1.5 1.5 0 0 1 3 1h4a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V9a.5.5 0 0 1 1 0v4a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13v-10z"/>
+                        <path d="M10 .5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V1.707L8.854 7.854a.5.5 0 1 1-.708-.708L14.293 1H10.5a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+    <nav class="tab-nav">
+        <button type="button" class="tab-button active" data-tab="tab-window-names">Window Names</button>
+        <button type="button" class="tab-button" data-tab="tab-sidebar-display">Sidebar Display</button>
+        <button type="button" class="tab-button" data-tab="tab-badge-counter">Badge Counter</button>
+    </nav>
+
+    <!-- Tab 1: Window Names -->
+    <div id="tab-window-names" class="tab-content active">
+        <div id="window-list">
+            <!-- Open windows and editable names will be dynamically populated here -->
         </div>
-        <div class="option-group" data-option="alwaysSVG">
-            <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
-            <label for="alwaysSVG">Always use dynamic SVG creation</label><br>
+    </div>
+
+    <!-- Tab 2: Sidebar Display -->
+    <div id="tab-sidebar-display" class="tab-content">
+        <div id="sidebar-preview">
+            <!-- Text representation of windows dynamically rendered here -->
         </div>
-    </form>
-    <h2>Display Options</h2>
-    <div id="image-row2"></div> <!-- Images will be dynamically inserted here -->
-    <div class="option-group2" data-option="oneLinePerWindow">
-        <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow" title="Table aligned, 1 row per info element, monospace font, maintains table up to 9999 tabs, Format -> Label: xxxx / yyyy tabs">
-        <label for="oneLinePerWindow" title="Format -> Label: xxxx / yyyy tabs, table aligned, monospace font, maintains alignment up to 9999 tabs">Use 1 line of information per window</label><br>
+        <div class="options-group">
+            <div class="group-title">Display Layout</div>
+            <div id="display-options-list">
+                <label class="option-card" for="oneLinePerWindow">
+                    <input type="radio" id="oneLinePerWindow" name="displayStyleOption" value="oneLinePerWindow">
+                    <div class="option-text">
+                        <span class="option-title">1 Line Per Window</span>
+                        <span class="option-desc">Table-aligned monospace layout with one row per window and global totals</span>
+                    </div>
+                </label>
+                <label class="option-card" for="compactView">
+                    <input type="radio" id="compactView" name="displayStyleOption" value="compactView">
+                    <div class="option-text">
+                        <span class="option-title">Compact View</span>
+                        <span class="option-desc">Inline narrow layout joining window tab counts</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="options-group">
+            <div class="group-title">Display Scope</div>
+            <div id="sidebar-scope-options-list">
+                <label class="option-card" for="sidebarScopeAll">
+                    <input type="radio" id="sidebarScopeAll" name="sidebarScopeOption" value="all">
+                    <div class="option-text">
+                        <span class="option-title">All Windows</span>
+                        <span class="option-desc">Shows tab counts for each open window plus global totals</span>
+                    </div>
+                </label>
+                <label class="option-card" for="sidebarScopeCurrent">
+                    <input type="radio" id="sidebarScopeCurrent" name="sidebarScopeOption" value="current">
+                    <div class="option-text">
+                        <span class="option-title">Current Window Only</span>
+                        <span class="option-desc">Shows tab counts only for this window in its sidebar</span>
+                    </div>
+                </label>
+            </div>
+        </div>
     </div>
-    <div class="option-group2" data-option="compactView">
-        <input type="radio" id="compactView" name="displayStyleOption" value="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">
-        <label for="compactView" title="Left justified, narrow font, self-adjusting button height, window info text will not wrap, will dynamically adjust if the sidebar is resized">Use a compact view that strings the information together</label><br>
+
+    <!-- Tab 3: Badge Counter -->
+    <div id="tab-badge-counter" class="tab-content">
+        <div id="badge-preview">
+            <!-- Badge preview progression dynamically rendered here -->
+        </div>
+        <div class="options-group">
+            <div class="group-title">Badge Scope</div>
+            <div id="badge-scope-options-list">
+                <label class="option-card" for="badgeScopeAll">
+                    <input type="radio" id="badgeScopeAll" name="badgeScopeOption" value="all">
+                    <div class="option-text">
+                        <span class="option-title">All Windows</span>
+                        <span class="option-desc">Badge displays total tabs across all browser windows</span>
+                    </div>
+                </label>
+                <label class="option-card" for="badgeScopeCurrent">
+                    <input type="radio" id="badgeScopeCurrent" name="badgeScopeOption" value="current">
+                    <div class="option-text">
+                        <span class="option-title">Current Window Only</span>
+                        <span class="option-desc">Badge displays total tabs for that specific window</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="options-group">
+            <div class="group-title">Render Method</div>
+            <div id="badge-options-list">
+                <label class="option-card" for="switchToSVG">
+                    <input type="radio" id="switchToSVG" name="displayOption" value="switchToSVG">
+                    <div class="option-text">
+                        <span class="option-title">Native Badge (1–999) + SVG (1000+)</span>
+                        <span class="option-desc">Native badge up to 999 tabs, then dynamic SVG for 1000+</span>
+                    </div>
+                </label>
+                <label class="option-card" for="alwaysSVG">
+                    <input type="radio" id="alwaysSVG" name="displayOption" value="alwaysSVG">
+                    <div class="option-text">
+                        <span class="option-title">Always Dynamic SVG</span>
+                        <span class="option-desc">Renders tab counts directly onto the icon using dynamic SVG</span>
+                    </div>
+                </label>
+            </div>
+        </div>
     </div>
-    <div id="message"></div>
+
+        <div id="message"></div>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>

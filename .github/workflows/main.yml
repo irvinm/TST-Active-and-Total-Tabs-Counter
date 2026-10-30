@@ -8,10 +8,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: build xpi
-      run: make
-    - uses: actions/upload-artifact@master
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Lint extension
+      run: npm run lint
+    - name: Run unit tests
+      run: npm test
+    - name: Build extension
+      run: npm run build
+    - uses: actions/upload-artifact@v4
       with:
         name: TST-Active-and-Total-Tabs-Counter.xpi
-        path: TST-Active-and-Total-Tabs-Counter.xpi
+        path: web-ext-artifacts/tst-active-and-total-tabs-counter.xpi
+        if-no-files-found: error

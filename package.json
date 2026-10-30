@@ -1,0 +1,62 @@
+{
+  "name": "tst-active-and-total-tabs-counter",
+  "version": "1.1.0",
+  "description": "Active and Total Tabs Counter for Tree Style Tab and toolbar badge.",
+  "main": "background.js",
+  "scripts": {
+    "build": "web-ext build --overwrite-dest",
+    "lint": "web-ext lint",
+    "start": "web-ext run",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter.git"
+  },
+  "author": "Michael C. Irvin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/issues"
+  },
+  "homepage": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "webExt": {
+    "ignoreFiles": [
+      "package.json",
+      "package-lock.json",
+      "tests",
+      ".github",
+      ".vscode",
+      ".gemini",
+      ".agents",
+      ".specify",
+      "GEMINI.md",
+      "AMO.md",
+      "README.md",
+      "LICENSE",
+      "screenshots",
+      "screenshots/**"
+    ],
+    "build": {
+      "overwriteDest": true,
+      "filename": "tst-active-and-total-tabs-counter.xpi"
+    }
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
+    "web-ext": "^10.8.0"
+  },
+  "overrides": {
+    "adm-zip": "^0.6.1",
+    "brace-expansion": "^5.0.8",
+    "fast-uri": "^3.1.9",
+    "js-yaml": "^4.3.0",
+    "node-forge": "^1.4.2",
+    "shell-quote": "^1.10.1",
+    "source-map-js": "^1.2.2",
+    "undici": "^7.30.1"
+  }
+}
