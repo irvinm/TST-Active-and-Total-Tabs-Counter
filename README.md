@@ -1,51 +1,85 @@
 ![CI/CD](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/workflows/CI/CD/badge.svg) ![Mozilla Add-on](https://img.shields.io/amo/users/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square) ![](https://img.shields.io/amo/v/TST-Active-and-Total-Tabs-Ctr.svg?style=flat-square)
 
 # TST Active and Total Tabs Counter
-### This project is to help track and display:
-- Active (non-discarded) tabs per window and across all windows
-- Total tabs per window and across all windows
-- Custom, persistent window names across the sidebar and popup settings
-- Configurable sidebar and badge display scopes (All Windows or Current Window Only)
-- Active window marker (`*`) in multi-window sidebar displays
-- Choice between monospace table ("1 Line Per Window") and continuous inline ("Compact View") layouts
 
-### To enable this extension to work within Private Windows
-- Enable the extension itself to "Allow" to "Run in Private Windows"
-    - about:addons -> TST Active and Total Tabs Counter -> Allow "Run in Private Windows"
-- Enable the extension to interact with TST in Private Windows
-    - TST Options -> Extra Features via Other Extensions -> Enable "Notify Message from Private Windows" for "TST Active and Total Tabs Counter" -> Restart TST or the browser
+Tracks and displays active (non-discarded) and total tabs directly above the "New Tab" button in Tree Style Tab (TST) and on the browser toolbar badge.
 
-# History of the problem
-Older versions of TST could accomplish this with some counting CSS code. However, as of TST v4.0 [(Github Release)](https://github.com/piroor/treestyletab/releases/tag/4.0.1), TST introduces some performance improvements that effectively breaks the CSS counting solution. [(TST Discussion)](https://github.com/piroor/treestyletab/discussions/3472)
+![Initial Installation](screenshots/Initial-Install.png)
 
-This addon tracks the number of active tabs and total tabs to be displayed directly on top of the "new tab button" inside the Tree Style Tab sidebar, as well as on the browser toolbar badge.
-- **Sidebar Scope**: Show tab counts across all windows (with the current window marked with `*`) or scoped strictly to the current window.
-- **Display Layout**: Choose between the table-aligned "1 Line Per Window" format or the space-saving "Compact View".
-- **Custom Window Names**: Assign persistent names to windows via the extension popup.
+## Core Capabilities
+- **Active & Total Tab Tracking**: Counts loaded tabs and total tabs per window and across all open windows.
+- **Custom Window Naming**: Assign persistent names to windows directly from the popup settings; names reflect immediately in TST sidebars.
+- **Configurable Sidebar Layouts**: Choose between an aligned monospace table (**1 Line Per Window**) or narrow continuous inline (**Compact View**).
+- **Flexible Scopes**: View tab counts across **All Windows** (with an active window indicator `*`) or strictly for the **Current Window**.
+- **Toolbar Badge Counter**: Show the current window's count or global total, with dynamic SVG badge rendering for up to 4 digits (up to 9,999 tabs).
+- **Standalone Support**: Functions as a toolbar tab counter even when Tree Style Tab is disabled or not installed.
 
-Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-material" title="school-material icons">School-material icons created by Freepik - Flaticon</a>
+---
 
-# Examples
-## 1 line per window
-### 1 Window (Total only - 4 Active, 108 Total)
-![1Window](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/d13c8d87-d1e2-4474-aef9-74cc680fbedb)
+## Features & Visual Walkthrough
 
-### 2 Windows (Individual windows (4A/108T, 1A/1T), then Total (5A/109T))
-![2Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/438dfdac-6468-495a-907f-b3cf75973108)
+### 🏷️ Custom Window Naming
+Assign custom names to your Firefox windows (e.g., `Main` and `Secondary`) in the **Window Names** tab. Names update across Tree Style Tab sidebars in real time as you type and persist across browser restarts.
 
-### 3 Windows (Individual windows (4A/108T, 1A/1T, 3A/3T), then Total (8A/112T))
-![3Windows](https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/assets/979729/901d2e6d-8a16-48d1-b3be-6ba595111b9a)
+| Default Window Names | Custom Names Assigned (with live TST sync) |
+| :---: | :---: |
+| ![Default Window Names](screenshots/Default-Window-Names.png) | ![Custom Window Names](screenshots/Custom-Window-Names.png) |
 
-## Layout Comparison (v0.9.9+)
-### 1 line per window
-![image](https://github.com/user-attachments/assets/4f256b5c-5c2c-42ac-ac69-5c75a31a6870)
-### Compact mode
-![image](https://github.com/user-attachments/assets/aadc049d-012d-4ff0-85dd-b0f36bb572d3)
+---
+
+### 📊 Tree Style Tab Sidebar Display Styles
+Customize the layout and scope of the tab counter rendered in the Tree Style Tab sidebar via the **Sidebar Display** tab.
+
+#### 1 Line Per Window (Monospace Table)
+Aligned tabular layout showing active and total tabs for each window, with an asterisk (`*`) designating the currently focused window:
+![Sidebar 1 Line Per Window](screenshots/Sidebar-Options.png)
+
+#### Compact View (Continuous Inline)
+Narrow, space-saving format grouping window statistics into a single continuous row:
+![Sidebar Compact View](screenshots/Sidebar-Compact-View.png)
+
+#### Current Window Only Scope
+Isolate the sidebar counter display strictly to the tabs belonging to the current window:
+![Sidebar Current Window Only](screenshots/Sidebar-Current-Window-Only.png)
+
+---
+
+### 🔢 Toolbar Badge Counter Options
+Configure toolbar badge behavior, scope, and rendering modes via the **Badge Counter** tab.
+
+#### Badge Scope: All Windows vs. Current Window Only
+Choose whether the toolbar badge displays total tabs across all browser windows or tracks the active window's tabs dynamically as you switch windows:
+
+| All Windows (Global Total: 42) | Current Window Only (Dynamic: 39 vs. 3) |
+| :---: | :---: |
+| ![Badge All Windows](screenshots/Badge-All-Windows.png) | ![Badge Current Window Only](screenshots/Badge-Current-Window-Only.png) |
+
+#### Dynamic SVG Rendering (1,000 to 9,999 Tabs)
+Firefox native badges truncate at 3 characters. Choosing **Always Dynamic SVG** (or the default Hybrid mode) renders crisp numeric counts directly on the icon, supporting 4 digits (up to 9,999 tabs) without clipping:
+![Badge SVG Rendering](screenshots/Badge-SVG-Render-Only.png)
+
+---
+
+## Private Windows Setup
+To enable this extension to count tabs inside Private Windows:
+1. **Allow Extension in Private Windows**:
+   * Navigate to `about:addons` ➔ **TST Active and Total Tabs Counter** ➔ toggle **Run in Private Windows** to **Allow**.
+2. **Enable TST Inter-Extension Messaging**:
+   * Navigate to **Tree Style Tab Options** ➔ **Extra Features via Other Extensions** ➔ enable **Notify Message from Private Windows for "TST Active and Total Tabs Counter"** ➔ restart TST or Firefox.
+
+---
+
+## Background & History
+Older versions of TST could accomplish tab counting with custom CSS. However, as of TST v4.0 ([GitHub Release](https://github.com/piroor/treestyletab/releases/tag/4.0.1)), internal architectural and performance improvements made pure CSS counting impossible ([TST Discussion #3472](https://github.com/piroor/treestyletab/discussions/3472)). This addon restores and expands that functionality via official TST extension messaging APIs.
+
+Addon icon provided by: <a href="https://www.flaticon.com/free-icons/school-material" title="school-material icons">School-material icons created by Freepik - Flaticon</a>
+
+---
 
 ## Version History
 
 <details open>
-<summary><b>Version 1.1.0 (October 6, 2026) - Custom Window Names, Scope Controls, Tabbed Settings UI & Test Suite</b></summary>
+<summary><b>Version 1.1.0 (October 29, 2026) - Custom Window Names, Scope Controls, Tabbed Settings UI & Test Suite</b></summary>
 
 - **Custom Window Naming**: Assign custom, persistent names to Firefox windows with inline popup editing; custom window names update in real time across the TST sidebar display and persist across browser restarts.
 - **Tabbed Settings Popup UI**: Completely redesigned extension popup into an intuitive 3-tab layout (*Window Names*, *Sidebar Display*, and *Badge Counter*) with smooth transitions and compact styling.
@@ -147,4 +181,3 @@ Addon icon provided by:   <a href="https://www.flaticon.com/free-icons/school-ma
 - **Build & CI Automation**: Established automated XPI build scripts and GitHub Actions CI/CD pipeline.
 
 </details>
-
