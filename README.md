@@ -21,9 +21,13 @@ Tracks and displays active (non-discarded) and total tabs directly above the "Ne
 ### 🏷️ Custom Window Naming
 Assign custom names to your Firefox windows (e.g., `Main` and `Secondary`) in the **Window Names** tab. Names update across Tree Style Tab sidebars in real time as you type and persist across browser restarts.
 
-| Default Window Names | Custom Names Assigned (with live TST sync) |
-| :---: | :---: |
-| ![Default Window Names](screenshots/Default-Window-Names.png) | ![Custom Window Names](screenshots/Custom-Window-Names.png) |
+#### Default Window Names View
+Displays window indices, active tab title previews, and the current window indicator dot:
+![Default Window Names](screenshots/Default-Window-Names.png)
+
+#### Custom Window Names Assigned
+Typing custom names immediately updates the labels in each Tree Style Tab sidebar in real time:
+![Custom Window Names](screenshots/Custom-Window-Names.png)
 
 ---
 
@@ -47,12 +51,13 @@ Isolate the sidebar counter display strictly to the tabs belonging to the curren
 ### 🔢 Toolbar Badge Counter Options
 Configure toolbar badge behavior, scope, and rendering modes via the **Badge Counter** tab.
 
-#### Badge Scope: All Windows vs. Current Window Only
-Choose whether the toolbar badge displays total tabs across all browser windows or tracks the active window's tabs dynamically as you switch windows:
+#### All Windows Scope (Global Total)
+Badge displays the cumulative tab count across all open browser windows (e.g., `42` total tabs across both windows):
+![Badge All Windows](screenshots/Badge-All-Windows.png)
 
-| All Windows (Global Total: 42) | Current Window Only (Dynamic: 39 vs. 3) |
-| :---: | :---: |
-| ![Badge All Windows](screenshots/Badge-All-Windows.png) | ![Badge Current Window Only](screenshots/Badge-Current-Window-Only.png) |
+#### Current Window Only Scope (Dynamic Focus Tracking)
+Badge dynamically switches to show the count for the currently active window (e.g., `39` on the Main window, `3` on the Secondary window):
+![Badge Current Window Only](screenshots/Badge-Current-Window-Only.png)
 
 #### Dynamic SVG Rendering (1,000 to 9,999 Tabs)
 Firefox native badges truncate at 3 characters. Choosing **Always Dynamic SVG** (or the default Hybrid mode) renders crisp numeric counts directly on the icon, supporting 4 digits (up to 9,999 tabs) without clipping:
