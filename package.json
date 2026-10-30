@@ -22,7 +22,9 @@
       "GEMINI.md",
       "AMO.md",
       "README.md",
-      "LICENSE"
+      "LICENSE",
+      "screenshots",
+      "screenshots/**"
     ],
     "build": {
       "overwriteDest": true,
