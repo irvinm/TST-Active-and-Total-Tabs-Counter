@@ -9,6 +9,19 @@
     "start": "web-ext run",
     "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter.git"
+  },
+  "author": "Michael C. Irvin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter/issues"
+  },
+  "homepage": "https://github.com/irvinm/TST-Active-and-Total-Tabs-Counter#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "webExt": {
     "ignoreFiles": [
       "package.json",
@@ -34,13 +47,16 @@
   "devDependencies": {
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "web-ext": "^10.6.0"
+    "web-ext": "^10.8.0"
   },
   "overrides": {
-    "adm-zip": "^0.6.0",
+    "adm-zip": "^0.6.1",
     "brace-expansion": "^5.0.8",
-    "fast-uri": "^3.1.4",
+    "fast-uri": "^3.1.9",
     "js-yaml": "^4.3.0",
-    "shell-quote": "^1.8.5"
+    "node-forge": "^1.4.2",
+    "shell-quote": "^1.10.1",
+    "source-map-js": "^1.2.2",
+    "undici": "^7.30.1"
   }
 }
